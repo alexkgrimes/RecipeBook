@@ -9,10 +9,10 @@ import Foundation
 import SwiftUI
 
 struct RecipeImage: View {
-    let recipe: Recipe
+    @Binding var recipe: Recipe
     
     var body: some View {
-        if let imageData = recipe.image, let image = UIImage(data: imageData) {
+       if let imageData = recipe.image, let image = UIImage(data: imageData) {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
@@ -21,8 +21,13 @@ struct RecipeImage: View {
                 image
                     .resizable()
                     .scaledToFill()
+                    .onAppear {
+                        if recipe.image == nil {
+                            recipe.image = image.asUIImage().pngData()
+                        }
+                    }
             } placeholder: {
-                Color.red
+                Image("recipe-placeholder")
             }
         }
         

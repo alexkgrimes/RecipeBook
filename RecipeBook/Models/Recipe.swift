@@ -16,10 +16,10 @@ final class Recipe {
     var ingredients: [String]
     var imageURL: URL?
     var image: Data?
-    var cookTime: Int
+    var cookTime: Int?
     var cuisine: String
-    var prepTime: Int
-    var totalTime: Int
+    var prepTime: Int?
+    var totalTime: Int?
     var title: String
     var recipeDescription: String?
     var author: String?
@@ -28,9 +28,9 @@ final class Recipe {
     var nutrients: [String: String]?
     var ratings: Double?
     var siteName: String?
-    var yields: String?
+    var yields: String
     
-    init(instructions: [String], ingredients: [String], imageURL: URL?, cookTime: Int, cuisine: String, prepTime: Int, totalTime: Int, title: String, recipeDescription: String?, author: String?, url: URL?, category: String?, nutrients: [String: String]?, ratings: Double?, siteName: String?, yields: String?) {
+    init(instructions: [String], ingredients: [String], imageURL: URL?, cookTime: Int?, cuisine: String, prepTime: Int?, totalTime: Int?, title: String, recipeDescription: String?, author: String?, url: URL?, category: String?, nutrients: [String: String]?, ratings: Double?, siteName: String?, yields: String) {
         self.timestamp = .now
         self.instructions = instructions
         self.ingredients = ingredients
@@ -73,10 +73,39 @@ final class Recipe {
         self.nutrients = recipeModel.nutrients
         self.ratings = recipeModel.ratings
         self.siteName = recipeModel.siteName
-        self.yields = recipeModel.yields
+        self.yields = recipeModel.yields ?? ""
     }
     
     static func emptyRecipe() -> Recipe {
-        return Recipe(instructions: [], ingredients: [], imageURL: URL(string: ""), cookTime: 0, cuisine: "", prepTime: 0, totalTime: 0, title: "", recipeDescription: "", author: "", url: URL(string: ""), category: "", nutrients: [:], ratings: 0.0, siteName: "", yields: "")
+        return Recipe(instructions: [], ingredients: [], imageURL: URL(string: ""), cookTime: nil, cuisine: "", prepTime: nil, totalTime: nil, title: "", recipeDescription: "", author: "", url: URL(string: ""), category: "", nutrients: [:], ratings: 0.0, siteName: "", yields: "")
+    }
+    
+    public var hasImage: Bool {
+        let noImage = self.image == nil && (self.imageURL == nil || self.imageURL?.absoluteString.isEmpty == true)
+        return !noImage
+    }
+    
+    public var canAddIngredient: Bool {
+        if let last = self.ingredients.last, !last.isEmpty {
+            return true
+        }
+        
+        if ingredients.isEmpty {
+            return true
+        }
+        
+        return false
+    }
+    
+    public var canAddStep: Bool {
+        if let last = self.instructions.last, !last.isEmpty {
+            return true
+        }
+        
+        if instructions.isEmpty {
+            return true
+        }
+        
+        return false
     }
 }

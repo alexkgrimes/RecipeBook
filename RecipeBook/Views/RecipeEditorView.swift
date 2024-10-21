@@ -7,10 +7,11 @@
 
 import Foundation
 import SwiftUI
+import PhotosUI
 
 struct RecipeEditorView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var recipe: Recipe
+    @StateObject var recipeViewModel: RecipeViewModel
     var saveRecipe: (Recipe) -> ()
     
     var body: some View {
@@ -24,62 +25,66 @@ struct RecipeEditorView: View {
     var manualEntryForm: some View {
         Form {
             Section {
-                AsyncImage(url: recipe.imageURL) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                        .onAppear {
-                            recipe.image = image.asUIImage().pngData()
-                         }
-                } placeholder: {
-                    Color.red
-                }
-                .frame(maxHeight: 200)
-                .clipShape(.rect(cornerRadius: 25))
+                RecipeImage(recipe: $recipeViewModel.recipe)
+                    .listRowInsets(EdgeInsets())
+                PhotosPicker(imageButtonString, selection: $recipeViewModel.imageSelection, matching: .images)
             }
-            .listRowInsets(EdgeInsets())
         
             Section("Title") {
-                TextField("Title", text: $recipe.title)
+                TextField("Title", text: $recipeViewModel.recipe.title)
+            }
+            
+            Section("Yields") {
+                TextField("Servings", text: $recipeViewModel.recipe.yields)
+            }
+            
+            Section("Cook Time") {
+                TextField("", value: $recipeViewModel.recipe.cookTime, format: .number, prompt: Text("Cook Time (mins)"))
+                    .keyboardType(UIKeyboardType.decimalPad)
+            }
+            
+            Section("Total Time") {
+                TextField("", value: $recipeViewModel.recipe.totalTime, format: .number, prompt: Text("Total Time (mins)"))
+                    .keyboardType(UIKeyboardType.decimalPad)
             }
             
             Section("Ingredients") {
-                ForEach(recipe.ingredients.indices, id: \.self) { index in
-                    TextField("Enter ingredient", text: $recipe.ingredients[index], axis: .vertical)
+                ForEach(recipeViewModel.recipe.ingredients.indices, id: \.self) { index in
+                    TextField("Enter ingredient", text: $recipeViewModel.recipe.ingredients[index], axis: .vertical)
                 }
                 
                 Button {
-                    if let last = recipe.ingredients.last, !last.isEmpty {
-                        recipe.ingredients.append("")
-                    }
+                    recipeViewModel.addIngredientIfNeeded()
                 } label: {
                     Text("Add Ingredient")
                 }
             }
             
             Section("Instructions") {
-                ForEach(recipe.instructions.indices, id: \.self) { index in
-                    TextField("Enter step", text: $recipe.instructions[index], axis: .vertical)
+                ForEach(recipeViewModel.recipe.instructions.indices, id: \.self) { index in
+                    TextField("Enter step", text: $recipeViewModel.recipe.instructions[index], axis: .vertical)
                 }
                 
                 Button {
-                    if let last = recipe.instructions.last, !last.isEmpty {
-                        recipe.instructions.append("")
-                    }
+                    recipeViewModel.addStepIfNeeded()
                 } label: {
                     Text("Add Step")
                 }
             }
             
             Button {
-                recipe.ingredients = recipe.ingredients.filter { !$0.isEmpty }
-                recipe.instructions = recipe.instructions.filter { !$0.isEmpty }
-                saveRecipe(recipe)
+                recipeViewModel.recipe.ingredients = recipeViewModel.recipe.ingredients.filter { !$0.isEmpty }
+                recipeViewModel.recipe.instructions = recipeViewModel.recipe.instructions.filter { !$0.isEmpty }
+                saveRecipe(recipeViewModel.recipe)
                 dismiss()
             } label: {
                 Text("Save Recipe")
             }
         }
+    }
+    
+    var imageButtonString: String {
+        return recipeViewModel.recipe.hasImage ? "Edit Image" : "Add Image"
     }
 }
 

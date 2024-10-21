@@ -12,12 +12,12 @@ struct HomeView: View {
     @State private var inputURL: Bool = false
     @State private var inputRecipe: Bool = false
     
-    @State private var inProgressRecipe: Recipe = Recipe.emptyRecipe()
-    @State private var model: HomeViewModel
+    @StateObject private var recipeViewModel: RecipeViewModel = RecipeViewModel()
+    @StateObject private var model: HomeViewModel
     
     init(modelContext: ModelContext) {
         let model = HomeViewModel(modelContext: modelContext)
-        _model = State(initialValue: model)
+        _model = StateObject(wrappedValue: model)
     }
 
     var body: some View {
@@ -33,12 +33,12 @@ struct HomeView: View {
             .sheet(isPresented: $inputURL, onDismiss: {
                 inputRecipe = true
             }) {
-                URLInputView(inProgressRecipe: $inProgressRecipe)
+                URLInputView(recipeViewModel: recipeViewModel)
                     .presentationDetents([.fraction(0.3)])
                 
             }
             .sheet(isPresented: $inputRecipe) {
-                RecipeEditorView(recipe: $inProgressRecipe) { recipe in
+                RecipeEditorView(recipeViewModel: recipeViewModel) { recipe in
                     model.add(recipe: recipe)
                 }
             }

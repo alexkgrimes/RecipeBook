@@ -9,9 +9,10 @@ import Foundation
 import SwiftUI
 
 struct URLInputView: View {
-    @State private var url = ""
-    @Binding var inProgressRecipe: Recipe
+    @ObservedObject var recipeViewModel: RecipeViewModel
     @Environment(\.dismiss) var dismiss
+    
+    @State private var url = ""
     
     var body: some View {
         NavigationStack {
@@ -24,18 +25,20 @@ struct URLInputView: View {
     var urlEntryForm: some View {
         Form {
             TextField("Enter URL", text: $url)
+                .keyboardType(.URL)
+                .textContentType(.URL)
             
             Button {
                 print("Submit")
                 Task {
-                    inProgressRecipe = await WebService.fetchRecipe(with: url)
+                    recipeViewModel.recipe = await WebService.fetchRecipe(with: url)
                     dismiss()
                 }
             } label: {
                 Text("Submit")
             }
         }.onAppear {
-            inProgressRecipe = Recipe.emptyRecipe()
+            recipeViewModel.recipe = Recipe.emptyRecipe()
         }
     }
 }

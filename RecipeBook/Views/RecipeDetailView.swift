@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RecipeDetailView: View {
-    let recipe: Recipe
+    @State var recipe: Recipe
     
     var body: some View {
         NavigationStack {
@@ -19,7 +19,7 @@ struct RecipeDetailView: View {
                         .font(.headline)
                         .bold()
                     
-                    RecipeImage(recipe: recipe)
+                    RecipeImage(recipe: $recipe)
                         .frame(maxHeight: 200)
                         .clipShape(.rect(cornerRadius: 25))
                     
@@ -27,8 +27,17 @@ struct RecipeDetailView: View {
                     
                     HStack {
                         Spacer()
-                        MetadataView(title: "Total Time", subtitle: "\(recipe.totalTime) mins")
-                        Spacer()
+                        
+                        if let totalTime = recipe.totalTime {
+                            MetadataView(title: "Total Time", subtitle: "\(totalTime) mins")
+                            Spacer()
+                        }
+                        
+                        if let cookTime = recipe.cookTime {
+                            MetadataView(title: "Cook Time", subtitle: "\(cookTime) mins")
+                            Spacer()
+                        }
+                        
                         MetadataView(title: "Servings", subtitle: recipe.yields)
                         Spacer()
                     }
