@@ -60,6 +60,15 @@ struct RecipeDetailView: View {
                 }
                 .padding(.all)
             }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        // Present edit
+                    } label: {
+                        Image(systemName: "pencil")
+                    }
+                }
+            }
         }
     }
 }

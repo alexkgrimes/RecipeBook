@@ -13,11 +13,15 @@ struct HomeView: View {
     @State private var inputRecipe: Bool = false
     
     @StateObject private var recipeViewModel: RecipeViewModel = RecipeViewModel()
-    @StateObject private var model: HomeViewModel
+    
+    @State private var newRecipe: Recipe
+    @StateObject private var model: RecipeBookViewModel
     
     init(modelContext: ModelContext) {
-        let model = HomeViewModel(modelContext: modelContext)
+        let model = RecipeBookViewModel(modelContext: modelContext)
         _model = StateObject(wrappedValue: model)
+        
+        _newRecipe = State(wrappedValue: Recipe.emptyRecipe())
     }
 
     var body: some View {

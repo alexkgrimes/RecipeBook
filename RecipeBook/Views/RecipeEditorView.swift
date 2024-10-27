@@ -38,6 +38,11 @@ struct RecipeEditorView: View {
                 TextField("Servings", text: $recipeViewModel.recipe.yields)
             }
             
+            Section("Prep Time") {
+                TextField("", value: $recipeViewModel.recipe.prepTime, format: .number, prompt: Text("Prep Time (mins)"))
+                    .keyboardType(UIKeyboardType.decimalPad)
+            }
+            
             Section("Cook Time") {
                 TextField("", value: $recipeViewModel.recipe.cookTime, format: .number, prompt: Text("Cook Time (mins)"))
                     .keyboardType(UIKeyboardType.decimalPad)
