@@ -33,6 +33,7 @@ struct RecipeEditorView: View {
         NavigationStack {
             manualEntryForm
                 .navigationTitle(editorMode == .new ? "New Recipe" : "Update Recipe")
+                .navigationBarTitleDisplayMode(.inline)
         }
     }
     

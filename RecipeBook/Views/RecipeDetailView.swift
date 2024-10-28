@@ -16,10 +16,6 @@ struct RecipeDetailView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading) {
-                    Text(recipe.title)
-                        .foregroundStyle(.green)
-                        .font(.headline)
-                        .bold()
                     
                     RecipeImage(recipe: $recipe)
                         .frame(maxHeight: 200)
@@ -68,12 +64,15 @@ struct RecipeDetailView: View {
                         showEditor = true
                     } label: {
                         Image(systemName: "pencil")
+                            .foregroundColor(.green)
                     }
                 }
             }
             .sheet(isPresented: $showEditor) {
                 RecipeEditorView(editorMode: .update, recipe: $recipe)
             }
+            .navigationTitle(recipe.title)
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
