@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct URLInputView: View {
-    @ObservedObject var recipeViewModel: RecipeViewModel
+    @Binding var newRecipe: Recipe
     @Environment(\.dismiss) var dismiss
     
     @State private var url = ""
@@ -31,14 +31,14 @@ struct URLInputView: View {
             Button {
                 print("Submit")
                 Task {
-                    recipeViewModel.recipe = await WebService.fetchRecipe(with: url)
+                    newRecipe = await WebService.fetchRecipe(with: url)
                     dismiss()
                 }
             } label: {
                 Text("Submit")
             }
         }.onAppear {
-            recipeViewModel.recipe = Recipe.emptyRecipe()
+            newRecipe = Recipe.emptyRecipe()
         }
     }
 }

@@ -9,15 +9,30 @@ import Foundation
 import SwiftUI
 import PhotosUI
 
+enum RecipeEditorMode {
+    case new
+    case update
+}
+
 struct RecipeEditorView: View {
     @Environment(\.dismiss) var dismiss
-    @StateObject var recipeViewModel: RecipeViewModel
-    var saveRecipe: (Recipe) -> ()
+    @StateObject var photoPickerViewModel: PhotoPickerViewModel
+    @Binding var recipe: Recipe
+    
+    let editorMode: RecipeEditorMode
+    var saveRecipe: ((Recipe) -> ())?
+    
+    init(editorMode: RecipeEditorMode, recipe: Binding<Recipe>, saveRecipe: ((Recipe) -> ())? = nil) {
+        self.editorMode = editorMode
+        self._recipe = recipe
+        self._photoPickerViewModel = StateObject(wrappedValue: PhotoPickerViewModel(recipe: recipe))
+        self.saveRecipe = saveRecipe
+    }
     
     var body: some View {
         NavigationStack {
             manualEntryForm
-                .navigationTitle("New Recipe")
+                .navigationTitle(editorMode == .new ? "New Recipe" : "Update Recipe")
         }
     }
     
@@ -25,71 +40,73 @@ struct RecipeEditorView: View {
     var manualEntryForm: some View {
         Form {
             Section {
-                RecipeImage(recipe: $recipeViewModel.recipe)
+                RecipeImage(recipe: $recipe)
                     .listRowInsets(EdgeInsets())
-                PhotosPicker(imageButtonString, selection: $recipeViewModel.imageSelection, matching: .images)
+                PhotosPicker(imageButtonString, selection: $photoPickerViewModel.imageSelection, matching: .images)
             }
         
             Section("Title") {
-                TextField("Title", text: $recipeViewModel.recipe.title)
+                TextField("Title", text: $recipe.title)
             }
             
             Section("Yields") {
-                TextField("Servings", text: $recipeViewModel.recipe.yields)
+                TextField("Servings", text: $recipe.yields)
             }
             
             Section("Prep Time") {
-                TextField("", value: $recipeViewModel.recipe.prepTime, format: .number, prompt: Text("Prep Time (mins)"))
+                TextField("", value: $recipe.prepTime, format: .number, prompt: Text("Prep Time (mins)"))
                     .keyboardType(UIKeyboardType.decimalPad)
             }
             
             Section("Cook Time") {
-                TextField("", value: $recipeViewModel.recipe.cookTime, format: .number, prompt: Text("Cook Time (mins)"))
+                TextField("", value: $recipe.cookTime, format: .number, prompt: Text("Cook Time (mins)"))
                     .keyboardType(UIKeyboardType.decimalPad)
             }
             
             Section("Total Time") {
-                TextField("", value: $recipeViewModel.recipe.totalTime, format: .number, prompt: Text("Total Time (mins)"))
+                TextField("", value: $recipe.totalTime, format: .number, prompt: Text("Total Time (mins)"))
                     .keyboardType(UIKeyboardType.decimalPad)
             }
             
             Section("Ingredients") {
-                ForEach(recipeViewModel.recipe.ingredients.indices, id: \.self) { index in
-                    TextField("Enter ingredient", text: $recipeViewModel.recipe.ingredients[index], axis: .vertical)
+                ForEach($recipe.ingredients.indices, id: \.self) { index in
+                    TextField("Enter ingredient", text: $recipe.ingredients[index], axis: .vertical)
                 }
                 
                 Button {
-                    recipeViewModel.addIngredientIfNeeded()
+                    recipe.addIngredientIfNeeded()
                 } label: {
                     Text("Add Ingredient")
                 }
             }
             
             Section("Instructions") {
-                ForEach(recipeViewModel.recipe.instructions.indices, id: \.self) { index in
-                    TextField("Enter step", text: $recipeViewModel.recipe.instructions[index], axis: .vertical)
+                ForEach($recipe.instructions.indices, id: \.self) { index in
+                    TextField("Enter step", text: $recipe.instructions[index], axis: .vertical)
                 }
                 
                 Button {
-                    recipeViewModel.addStepIfNeeded()
+                    recipe.addStepIfNeeded()
                 } label: {
                     Text("Add Step")
                 }
             }
             
-            Button {
-                recipeViewModel.recipe.ingredients = recipeViewModel.recipe.ingredients.filter { !$0.isEmpty }
-                recipeViewModel.recipe.instructions = recipeViewModel.recipe.instructions.filter { !$0.isEmpty }
-                saveRecipe(recipeViewModel.recipe)
-                dismiss()
-            } label: {
-                Text("Save Recipe")
+            if editorMode == .new {
+                Button {
+                    recipe.ingredients = recipe.ingredients.filter { !$0.isEmpty }
+                    recipe.instructions = recipe.instructions.filter { !$0.isEmpty }
+                    saveRecipe?(recipe)
+                    dismiss()
+                } label: {
+                    Text("Save Recipe")
+                }
             }
         }
     }
     
     var imageButtonString: String {
-        return recipeViewModel.recipe.hasImage ? "Edit Image" : "Add Image"
+        return recipe.hasImage ? "Edit Image" : "Add Image"
     }
 }
 

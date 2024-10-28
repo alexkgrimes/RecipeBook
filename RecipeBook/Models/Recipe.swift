@@ -108,4 +108,16 @@ final class Recipe {
         
         return false
     }
+    
+    public func addStepIfNeeded() {
+        if canAddStep {
+            instructions.append("")
+        }
+    }
+    
+    public func addIngredientIfNeeded() {
+        if canAddIngredient {
+            ingredients.append("")
+        }
+    }
 }

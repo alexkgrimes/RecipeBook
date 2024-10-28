@@ -10,6 +10,8 @@ import SwiftUI
 struct RecipeDetailView: View {
     @State var recipe: Recipe
     
+    @State var showEditor: Bool = false
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -63,11 +65,14 @@ struct RecipeDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        // Present edit
+                        showEditor = true
                     } label: {
                         Image(systemName: "pencil")
                     }
                 }
+            }
+            .sheet(isPresented: $showEditor) {
+                RecipeEditorView(editorMode: .update, recipe: $recipe)
             }
         }
     }

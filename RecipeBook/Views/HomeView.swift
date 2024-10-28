@@ -11,10 +11,8 @@ import SwiftData
 struct HomeView: View {
     @State private var inputURL: Bool = false
     @State private var inputRecipe: Bool = false
-    
-    @StateObject private var recipeViewModel: RecipeViewModel = RecipeViewModel()
-    
     @State private var newRecipe: Recipe
+    
     @StateObject private var model: RecipeBookViewModel
     
     init(modelContext: ModelContext) {
@@ -37,14 +35,14 @@ struct HomeView: View {
             .sheet(isPresented: $inputURL, onDismiss: {
                 inputRecipe = true
             }) {
-                URLInputView(recipeViewModel: recipeViewModel)
+                URLInputView(newRecipe: $newRecipe)
                     .presentationDetents([.fraction(0.3)])
                 
             }
             .sheet(isPresented: $inputRecipe) {
-                RecipeEditorView(recipeViewModel: recipeViewModel) { recipe in
+                RecipeEditorView(editorMode: .new, recipe: $newRecipe, saveRecipe: { recipe in
                     model.add(recipe: recipe)
-                }
+                })
             }
             .toolbar {
                 ToolbarItem {
