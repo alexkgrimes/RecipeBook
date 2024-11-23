@@ -34,6 +34,7 @@ final class WebService {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 print(error?.localizedDescription ?? "No data")
+                completion(Recipe.emptyRecipe())
                 return
             }
             

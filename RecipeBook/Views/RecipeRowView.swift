@@ -6,33 +6,38 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct RecipeRowView: View {
-    @State var recipe: Recipe
+    @ObservedObject var recipeViewModel: RecipeViewModel
     @State var displayDetail: Bool = false
+    
+    init(recipe: Recipe, managedObjectContext: NSManagedObjectContext) {
+        recipeViewModel = RecipeViewModel(recipe: recipe, managedObjectContext: managedObjectContext)
+    }
     
     var body: some View {
         HStack(alignment: .top) {
-            RecipeImage(recipe: $recipe)
+            RecipeImage(recipeViewModel: recipeViewModel)
                 .frame(width: 100, height: 100)
                 .clipShape(.rect(cornerRadius: 10))
 
             VStack(alignment: .leading) {
-                Text(recipe.title)
+                Text(recipeViewModel.recipe.title)
                     .foregroundStyle(.green)
                     .bold()
                 
-                if let cookTime = recipe.cookTime {
+                if let cookTime = recipeViewModel.recipe.cookTime {
                     Text("Cook time: \(cookTime) mins")
                         .font(.caption)
                 }
                 
-                if let totalTime = recipe.totalTime {
+                if let totalTime = recipeViewModel.recipe.totalTime {
                     Text("Total time: \(totalTime) mins")
                         .font(.caption)
                 }
                 
-                Text("\(recipe.cuisine)")
+                Text("\(recipeViewModel.recipe.cuisine)")
                     .font(.caption)
             }
         }
@@ -40,7 +45,7 @@ struct RecipeRowView: View {
             displayDetail = true
         }
         .sheet(isPresented: $displayDetail) {
-            RecipeDetailView(recipe: recipe)
+            RecipeDetailView(recipeViewModel: recipeViewModel)
         }
     }
 }

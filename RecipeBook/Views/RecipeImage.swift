@@ -9,21 +9,21 @@ import Foundation
 import SwiftUI
 
 struct RecipeImage: View {
-    @Binding var recipe: Recipe
+    @ObservedObject var recipeViewModel: RecipeViewModel
     
     var body: some View {
-       if let imageData = recipe.image, let image = UIImage(data: imageData) {
+        if let imageData = recipeViewModel.recipe.image, let image = UIImage(data: imageData) {
             Image(uiImage: image)
                 .resizable()
-                .scaledToFill()
+                .scaledToFit()
         } else {
-            AsyncImage(url: recipe.imageURL) { image in
+            AsyncImage(url: recipeViewModel.recipe.imageURL) { image in
                 image
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
                     .onAppear {
-                        if recipe.image == nil {
-                            recipe.image = image.asUIImage().pngData()
+                        if recipeViewModel.recipe.image == nil {
+                            recipeViewModel.recipe.image = image.asUIImage().pngData()
                         }
                     }
             } placeholder: {

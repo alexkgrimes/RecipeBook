@@ -8,17 +8,20 @@
 import SwiftUI
 
 struct RecipeDetailView: View {
-    @State var recipe: Recipe
-    
+    @ObservedObject var recipeViewModel: RecipeViewModel
     @State var showEditor: Bool = false
+    
+    init(recipeViewModel: RecipeViewModel) {
+        self.recipeViewModel = recipeViewModel
+    }
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading) {
                     
-                    RecipeImage(recipe: $recipe)
-                        .frame(maxHeight: 200)
+                    RecipeImage(recipeViewModel: recipeViewModel)
+                        .frame(maxWidth: UIScreen.main.bounds.width - 32.0, maxHeight: 200)
                         .clipShape(.rect(cornerRadius: 25))
                     
                     Spacer(minLength: 16.0)
@@ -26,17 +29,17 @@ struct RecipeDetailView: View {
                     HStack {
                         Spacer()
                         
-                        if let totalTime = recipe.totalTime {
+                        if let totalTime = recipeViewModel.recipe.totalTime {
                             MetadataView(title: "Total Time", subtitle: "\(totalTime) mins")
                             Spacer()
                         }
                         
-                        if let cookTime = recipe.cookTime {
+                        if let cookTime = recipeViewModel.recipe.cookTime {
                             MetadataView(title: "Cook Time", subtitle: "\(cookTime) mins")
                             Spacer()
                         }
                         
-                        MetadataView(title: "Servings", subtitle: recipe.yields)
+                        MetadataView(title: "Servings", subtitle: recipeViewModel.recipe.yields)
                         Spacer()
                     }
                     
@@ -44,16 +47,16 @@ struct RecipeDetailView: View {
                     
                     Text("Ingredients")
                         .bold()
-                    ForEach(recipe.ingredients.indices, id: \.self) { index in
-                        Text("• \(recipe.ingredients[index])")
+                    ForEach(recipeViewModel.recipe.ingredients.indices, id: \.self) { index in
+                        Text("• \(recipeViewModel.recipe.ingredients[index])")
                     }
                     
                     Spacer(minLength: 16.0)
                     
                     Text("Instructions")
                         .bold()
-                    ForEach(recipe.instructions.indices, id: \.self) { index in
-                        Text("\(index + 1). \(recipe.instructions[index])")
+                    ForEach(recipeViewModel.recipe.instructions.indices, id: \.self) { index in
+                        Text("\(index + 1). \(recipeViewModel.recipe.instructions[index])")
                     }
                 }
                 .padding(.all)
@@ -69,9 +72,11 @@ struct RecipeDetailView: View {
                 }
             }
             .sheet(isPresented: $showEditor) {
-                RecipeEditorView(editorMode: .update, recipe: $recipe)
+                RecipeEditorView(editorMode: .update, recipeViewModel: recipeViewModel, saveRecipe: { recipe in
+                    recipeViewModel.updateRecipe(recipe: recipe)
+                })
             }
-            .navigationTitle(recipe.title)
+            .navigationTitle(recipeViewModel.recipe.title)
             .navigationBarTitleDisplayMode(.inline)
         }
     }

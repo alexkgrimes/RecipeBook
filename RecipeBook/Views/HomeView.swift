@@ -6,14 +6,17 @@
 //
 
 import SwiftUI
-import SwiftData
+import CoreData
 
 struct HomeView: View {
+    @Environment(\.managedObjectContext) var managedObjectContext
+    @ObservedObject private var recipeViewModel: RecipeViewModel
+    
     @State private var inputURL: Bool = false
     @State private var inputRecipe: Bool = false
-    @State private var newRecipe: Recipe
+    @State private var editRecipeBook: Bool = false
+
     @State private var searchText = ""
-    
     @StateObject private var model: RecipeBookViewModel
     
     var filteredRecipes: [Recipe] {
@@ -72,37 +75,50 @@ struct HomeView: View {
         return labeledRecipes.map { $0.recipe }
     }
     
-    init(modelContext: ModelContext) {
-        let model = RecipeBookViewModel(modelContext: modelContext)
+    init(managedObjectContext: NSManagedObjectContext) {
+        let model = RecipeBookViewModel(managedObjectContext: managedObjectContext)
         _model = StateObject(wrappedValue: model)
         
-        _newRecipe = State(wrappedValue: Recipe.emptyRecipe())
+        recipeViewModel = RecipeViewModel(managedObjectContext: managedObjectContext)
     }
 
     var body: some View {
         NavigationView {
             List {
                 ForEach(filteredRecipes) { recipe in
-                    RecipeRowView(recipe: recipe)
+                    RecipeRowView(recipe: recipe, managedObjectContext: managedObjectContext)
                 }
                 .onDelete { (indexSet) in
-                    model.deleteRecipe(at: indexSet)
+                    for index in indexSet {
+                        model.delete(recipe: filteredRecipes[index])
+                    }
                 }
             }
             .sheet(isPresented: $inputURL, onDismiss: {
                 inputRecipe = true
             }) {
-                URLInputView(newRecipe: $newRecipe)
+                URLInputView(recipeViewModel: recipeViewModel)
                     .presentationDetents([.fraction(0.3)])
                 
             }
             .sheet(isPresented: $inputRecipe) {
-                RecipeEditorView(editorMode: .new, recipe: $newRecipe, saveRecipe: { recipe in
+                RecipeEditorView(editorMode: .new, recipeViewModel: recipeViewModel, saveRecipe: { recipe in
                     model.add(recipe: recipe)
                 })
             }
+            .sheet(isPresented: $editRecipeBook) {
+                RecipeBooksView(managedObjectContext: managedObjectContext)
+            }
             .toolbar {
-                ToolbarItem {
+                ToolbarItem(placement: .automatic) {
+                    Button {
+                        editRecipeBook = true
+                    } label: {
+                        Image(systemName: "books.vertical.fill")
+                    }
+                }
+                
+                ToolbarItem(placement: .automatic) {
                     Button {
                         inputURL = true
                     } label: {
@@ -110,9 +126,11 @@ struct HomeView: View {
                     }
                 }
             }
-            Text("Select an item")
         }
         .searchable(text: $searchText, prompt: "Search")
+        .onChange(of: recipeViewModel.recipe) { _, _ in
+            print("changed")
+        }
     }
 }
 
@@ -123,8 +141,8 @@ private let itemFormatter: DateFormatter = {
     return formatter
 }()
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView(modelContext: try! ModelContext(ModelContainer.init()))
-    }
-}
+//struct HomeView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        HomeView(modelContext: try! ModelContext(ModelContainer.init()))
+//    }
+//}
