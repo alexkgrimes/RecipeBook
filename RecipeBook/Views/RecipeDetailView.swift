@@ -10,6 +10,7 @@ import SwiftUI
 struct RecipeDetailView: View {
     @ObservedObject var recipeViewModel: RecipeViewModel
     @State var showEditor: Bool = false
+    @State var cookModeOn: Bool = false
     
     init(recipeViewModel: RecipeViewModel) {
         self.recipeViewModel = recipeViewModel
@@ -25,6 +26,8 @@ struct RecipeDetailView: View {
                         .clipShape(.rect(cornerRadius: 25))
                     
                     Spacer(minLength: 16.0)
+                    
+                    Toggle("Cook Mode", isOn: $cookModeOn)
                     
                     HStack {
                         Spacer()
@@ -78,6 +81,12 @@ struct RecipeDetailView: View {
             }
             .navigationTitle(recipeViewModel.recipe.title)
             .navigationBarTitleDisplayMode(.inline)
+            .onChange(of: cookModeOn) {
+                UIApplication.shared.isIdleTimerDisabled = cookModeOn
+            }
+            .onDisappear() {
+                cookModeOn = false
+            }
         }
     }
 }
