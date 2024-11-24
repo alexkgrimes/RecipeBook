@@ -17,7 +17,7 @@ struct HomeView: View {
     @State private var editRecipeBook: Bool = false
 
     @State private var searchText = ""
-    @StateObject private var model: RecipeBookViewModel
+    @StateObject private var model: HomeViewModel
     
     var filteredRecipes: [Recipe] {
         // Strip leading/trailing whitespace from `searchText`
@@ -76,7 +76,7 @@ struct HomeView: View {
     }
     
     init(managedObjectContext: NSManagedObjectContext) {
-        let model = RecipeBookViewModel(managedObjectContext: managedObjectContext)
+        let model = HomeViewModel(managedObjectContext: managedObjectContext)
         _model = StateObject(wrappedValue: model)
         
         recipeViewModel = RecipeViewModel(managedObjectContext: managedObjectContext)
@@ -128,8 +128,8 @@ struct HomeView: View {
             }
         }
         .searchable(text: $searchText, prompt: "Search")
-        .onChange(of: recipeViewModel.recipe) { _, _ in
-            print("changed")
+        .onAppear {
+            model.dataInitialization()
         }
     }
 }

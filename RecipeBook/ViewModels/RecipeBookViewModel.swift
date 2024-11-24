@@ -2,135 +2,49 @@
 //  RecipeBookViewModel.swift
 //  RecipeBook
 //
-//  Created by Alexandra Paras on 10/27/24.
+//  Created by Alexandra Paras on 11/23/24.
 //
 
 import Foundation
 import SwiftUI
 import CoreData
 
-@Observable
 class RecipeBookViewModel: ObservableObject {
     var managedObjectContext: NSManagedObjectContext
-    var recipes = [Recipe]()
     
-    var currentBookID: UUID? = nil
+    @Published var recipeBook: RecipeBook
     
-    init(managedObjectContext: NSManagedObjectContext) {
+    init(recipeBook: RecipeBook? = nil, managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
-        loadData()
+        self.recipeBook = recipeBook ?? RecipeBook.defaultBook
     }
- 
-    private func loadData() {
-        do {
-            Task {
-                guard let currentBookID = await self.dataInitialization() else {
-                    print("Could not determine a currentBookID.")
-                    return
-                }
-                
-                self.currentBookID = currentBookID
-                
-                let fetchRequest: NSFetchRequest<RecipeBookMO>
-                fetchRequest = RecipeBookMO.fetchRequest()
-                fetchRequest.predicate = NSPredicate(format: "uuid == %@", currentBookID.uuidString)
+    
+    func updateBook() {
 
-                let recipeBookMO = (try? managedObjectContext.fetch(fetchRequest)) ?? []
-                let recipeMOs = recipeBookMO.first?.recipes as? NSSet
-                self.recipes = recipeMOs?.map { Recipe(from: $0 as! RecipeMO) } ?? []
-            }
-        }
-    }
-    
-    func dataInitialization() async -> UUID? {
-        let fetchRequest: NSFetchRequest<RecipeBookMO>
-        fetchRequest = RecipeBookMO.fetchRequest()
-        let recipeBookMOs = (try? managedObjectContext.fetch(fetchRequest)) ?? []
-        
-        // Create a default book for which to store the recipes
-        if recipeBookMOs.isEmpty {
-            let defaultBook = RecipeBook.defaultBook
-            let recipeBookMO = RecipeBookMO(context: managedObjectContext)
-            
-            recipeBookMO.setValue(defaultBook.uuid, forKeyPath: "uuid")
-            recipeBookMO.setValue(defaultBook.name, forKeyPath: "name")
-              
-            do {
-                try managedObjectContext.save()
-                return defaultBook.uuid
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-            }
-        } else {
-            // ALEX TODO: read the default that has the currentBookID, and see if it still exists
-            // For now just used the first one
-            
-            return recipeBookMOs.first?.uuid
-        }
-        
-        print("Something went wrong.")
-        return nil
-    }
-    
-    func add(recipe: Recipe) {
-        guard let currentBookID = currentBookID else {
-            print("Something went wrong.")
+        let fetchRequest = RecipeBookMO.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "uuid == %@", recipeBook.uuid.uuidString)
+        guard let recipeBookMO = try? managedObjectContext.fetch(fetchRequest).first else {
             return
         }
+        recipeBookMO.setValue(recipeBook.name, forKeyPath: "name")
+
+       do {
+           try managedObjectContext.save()
+       } catch let error as NSError  {
+           print("Could not save \(error), \(error.userInfo)")
+       }
+   }
+    
+    func addBook() {
+        let recipeBookMO = RecipeBookMO(context: managedObjectContext)
         
-        let fetchRequest: NSFetchRequest<RecipeBookMO>
-        fetchRequest = RecipeBookMO.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "uuid == %@", currentBookID.uuidString)
-        let recipeBookMO = ((try? managedObjectContext.fetch(fetchRequest)) ?? []).first
+        recipeBookMO.setValue(recipeBook.uuid, forKeyPath: "uuid")
+        recipeBookMO.setValue(recipeBook.name, forKeyPath: "name")
         
-        let recipeMO = RecipeMO(context: managedObjectContext)
-        
-        recipeMO.setValue(recipe.uuid, forKeyPath: "uuid")
-        recipeMO.setValue(recipe.timestamp, forKeyPath: "timestamp")
-        recipeMO.setValue(recipe.instructions, forKeyPath: "instructions")
-        recipeMO.setValue(recipe.ingredients, forKeyPath: "ingredients")
-        recipeMO.setValue(recipe.imageURL, forKeyPath: "imageURL")
-        recipeMO.setValue(recipe.image, forKeyPath: "image")
-        recipeMO.setValue(recipe.cookTime, forKeyPath: "cookTime")
-        recipeMO.setValue(recipe.cuisine, forKeyPath: "cuisine")
-        recipeMO.setValue(recipe.prepTime, forKeyPath: "prepTime")
-        recipeMO.setValue(recipe.totalTime, forKeyPath: "totalTime")
-        recipeMO.setValue(recipe.title, forKeyPath: "title")
-        recipeMO.setValue(recipe.recipeDescription, forKeyPath: "recipeDescription")
-        recipeMO.setValue(recipe.author, forKeyPath: "author")
-        recipeMO.setValue(recipe.url, forKeyPath: "url")
-        recipeMO.setValue(recipe.category, forKeyPath: "category")
-        recipeMO.setValue(recipe.nutrients, forKeyPath: "nutrients")
-        recipeMO.setValue(recipe.ratings, forKeyPath: "ratings")
-        recipeMO.setValue(recipe.siteName, forKeyPath: "siteName")
-        recipeMO.setValue(recipe.yields, forKeyPath: "yields")
-        
-        recipeMO.setValue(recipeBookMO, forKey: "book")
-          
         do {
             try managedObjectContext.save()
-            managedObjectContext.refresh(recipeBookMO!, mergeChanges: false)
-            loadData()
         } catch let error as NSError {
             print("Could not save. \(error), \(error.userInfo)")
-        }
-    }
-    
-    func delete(recipe: Recipe) {
-        
-        let fetchRequest = RecipeMO.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "uuid == %@", recipe.uuid.uuidString)
-
-        guard let recipeMO = try? managedObjectContext.fetch(fetchRequest).first else {
-            return
-        }
-        
-        managedObjectContext.delete(recipeMO)
-        do {
-            try managedObjectContext.save()
-            loadData()
-        } catch{
-            print(error)
         }
     }
 }
