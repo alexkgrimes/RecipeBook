@@ -15,12 +15,12 @@ struct RecipeImage: View {
         if let imageData = recipeViewModel.recipe.image, let image = UIImage(data: imageData) {
             Image(uiImage: image)
                 .resizable()
-                .scaledToFit()
+                .scaledToFill()
         } else {
             AsyncImage(url: recipeViewModel.recipe.imageURL) { image in
                 image
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
                     .onAppear {
                         if recipeViewModel.recipe.image == nil {
                             recipeViewModel.recipe.image = image.asUIImage().pngData()

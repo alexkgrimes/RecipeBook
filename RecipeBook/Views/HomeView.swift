@@ -107,7 +107,7 @@ struct HomeView: View {
                 })
             }
             .sheet(isPresented: $editRecipeBook) {
-                RecipeBooksView(managedObjectContext: managedObjectContext)
+                RecipeLibraryView(managedObjectContext: managedObjectContext, currentBookID: $model.currentBookID)
             }
             .toolbar {
                 ToolbarItem(placement: .automatic) {

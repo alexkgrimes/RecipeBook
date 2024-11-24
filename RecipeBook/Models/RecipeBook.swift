@@ -9,18 +9,20 @@ import Foundation
 import UIKit
 
 final class RecipeBook: Identifiable {
-    var uuid = UUID()
-    var name: String = "My Recipe Book"
-    var recipes: [Recipe] = []
+    var uuid: UUID
+    var name: String = ""
     
-    init(recipes: [Recipe]) {
-        self.recipes = recipes
+    init(uuid: UUID, name: String) {
+        self.uuid = uuid
+        self.name = name
     }
     
     init(from recipeBookMO: RecipeBookMO) {
+        self.uuid = recipeBookMO.uuid ?? UUID()
         self.name = recipeBookMO.name ?? ""
-        
-        let recipeMOs = recipeBookMO.recipes as? [RecipeMO] ?? []
-        self.recipes = recipeMOs.compactMap { Recipe(from: $0) }
+    }
+    
+    static var defaultBook: RecipeBook {
+        return RecipeBook(uuid: UUID(), name: "My Recipe Book")
     }
 }
