@@ -24,7 +24,7 @@ struct RecipeRowView: View {
 
             VStack(alignment: .leading) {
                 Text(recipeViewModel.recipe.title)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(Color.accentColor)
                     .bold()
                 
                 if let cookTime = recipeViewModel.recipe.cookTime {

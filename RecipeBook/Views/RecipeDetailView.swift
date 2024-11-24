@@ -67,7 +67,7 @@ struct RecipeDetailView: View {
                         showEditor = true
                     } label: {
                         Image(systemName: "pencil")
-                            .foregroundColor(.green)
+                            .foregroundColor(.accentColor)
                     }
                 }
             }

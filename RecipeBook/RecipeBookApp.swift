@@ -16,7 +16,6 @@ struct RecipeBookApp: App {
         WindowGroup {
             HomeView(managedObjectContext: persistenceController.container.viewContext)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .accentColor(Color.green)
         }
         .onChange(of: scenePhase) { _, _ in
             persistenceController.save()
