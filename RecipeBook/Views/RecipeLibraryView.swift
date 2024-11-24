@@ -14,13 +14,13 @@ struct RecipeLibraryView: View {
     @StateObject private var model: RecipeLibraryViewModel
     @State private var showEditor: Bool = false
     @State private var addBook: Bool = false
-    @Binding private var currentBookID: UUID?
+    @Binding private var currentBook: RecipeBook?
     @State private var selectedBook: RecipeBook? = nil
     
-    init(managedObjectContext: NSManagedObjectContext, currentBookID: Binding<UUID?>) {
+    init(managedObjectContext: NSManagedObjectContext, currentBook: Binding<RecipeBook?>) {
         let model = RecipeLibraryViewModel(managedObjectContext: managedObjectContext)
         _model = StateObject(wrappedValue: model)
-        _currentBookID = currentBookID
+        _currentBook = currentBook
         self.managedObjectContext = managedObjectContext
     }
     
@@ -31,7 +31,7 @@ struct RecipeLibraryView: View {
                     
                     HStack {
                         VStack(alignment: .leading) {
-                            if currentBookID?.uuidString == book.uuid.uuidString {
+                            if currentBook?.uuid.uuidString == book.uuid.uuidString {
                                 Text("Current Book")
                                     .foregroundStyle(.tertiary)
                             }
@@ -42,7 +42,7 @@ struct RecipeLibraryView: View {
                                 .foregroundStyle(.secondary)
                         }
                         .onTapGesture {
-                            currentBookID = book.uuid
+                            currentBook = book
                         }
                         
                         Spacer()

@@ -94,6 +94,8 @@ struct HomeView: View {
                     }
                 }
             }
+            .navigationTitle(model.currentBook?.name ?? "")
+            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $inputURL, onDismiss: {
                 inputRecipe = true
             }) {
@@ -107,10 +109,10 @@ struct HomeView: View {
                 })
             }
             .sheet(isPresented: $editRecipeBook) {
-                RecipeLibraryView(managedObjectContext: managedObjectContext, currentBookID: $model.currentBookID)
+                RecipeLibraryView(managedObjectContext: managedObjectContext, currentBook: $model.currentBook)
             }
             .toolbar {
-                ToolbarItem(placement: .automatic) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button {
                         editRecipeBook = true
                     } label: {
@@ -118,7 +120,7 @@ struct HomeView: View {
                     }
                 }
                 
-                ToolbarItem(placement: .automatic) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         inputURL = true
                     } label: {

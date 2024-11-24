@@ -14,9 +14,16 @@ class HomeViewModel: ObservableObject {
     var managedObjectContext: NSManagedObjectContext
     var recipes = [Recipe]()
     
-    var currentBookID: UUID? = nil {
+//    var currentBookID: UUID? = nil {
+//        didSet {
+//            print("currentBookID changed: \(oldValue?.uuidString) to \(currentBookID?.uuidString)")
+//            loadData()
+//        }
+//    }
+    
+    var currentBook: RecipeBook? = nil {
         didSet {
-            print("currentBookID changed: \(oldValue?.uuidString) to \(currentBookID?.uuidString)")
+            print("currentBook changed: \(oldValue?.uuid.uuidString) to \(currentBook?.uuid.uuidString)")
             loadData()
         }
     }
@@ -30,7 +37,7 @@ class HomeViewModel: ObservableObject {
             Task {
                 print("loadData()")
                 
-                guard let currentBookID = currentBookID else {
+                guard let currentBookID = currentBook?.uuid else {
                     print("No current book ID")
                     return
                 }
@@ -61,6 +68,15 @@ class HomeViewModel: ObservableObject {
         fetchRequest = RecipeBookMO.fetchRequest()
         let recipeBookMOs = (try? managedObjectContext.fetch(fetchRequest)) ?? []
         
+        
+        // ALEX TODO: read the default that has the currentBookID, and see if it still exists
+        // For now just used the first one
+        if let recipeBookMO = recipeBookMOs.first {
+            print("Setting to first book UUID")
+            currentBook = RecipeBook(from: recipeBookMO)
+            return
+        }
+        
         // Create a default book for which to store the recipes
         if recipeBookMOs.isEmpty {
             let defaultBook = RecipeBook.defaultBook
@@ -72,27 +88,20 @@ class HomeViewModel: ObservableObject {
             do {
                 try managedObjectContext.save()
                 
-                print("Setting to default book UUID")
-                currentBookID = defaultBook.uuid
+                print("Setting to default book")
+                currentBook = defaultBook
                 return
             } catch let error as NSError {
                 print("Could not save. \(error), \(error.userInfo)")
             }
-        } else {
-            // ALEX TODO: read the default that has the currentBookID, and see if it still exists
-            // For now just used the first one
-            
-            print("Setting to first book UUID")
-            currentBookID = recipeBookMOs.first?.uuid
-            return
         }
         
         print("Something went wrong.")
-        currentBookID = nil
+        currentBook = nil
     }
     
     func add(recipe: Recipe) {
-        guard let currentBookID = currentBookID else {
+        guard let currentBookID = currentBook?.uuid else {
             print("Something went wrong.")
             return
         }
