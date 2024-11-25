@@ -23,6 +23,6 @@ final class RecipeBook: Identifiable {
     }
     
     static var defaultBook: RecipeBook {
-        return RecipeBook(uuid: UUID(), name: "My Recipe Book")
+        return RecipeBook(uuid: UUID(), name: "")
     }
 }

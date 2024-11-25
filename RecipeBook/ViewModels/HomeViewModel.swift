@@ -83,7 +83,7 @@ class HomeViewModel: ObservableObject {
             let recipeBookMO = RecipeBookMO(context: managedObjectContext)
             
             recipeBookMO.setValue(defaultBook.uuid, forKeyPath: "uuid")
-            recipeBookMO.setValue(defaultBook.name, forKeyPath: "name")
+            recipeBookMO.setValue("My Recipe Book", forKeyPath: "name")
               
             do {
                 try managedObjectContext.save()

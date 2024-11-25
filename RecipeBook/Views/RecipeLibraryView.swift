@@ -33,7 +33,7 @@ struct RecipeLibraryView: View {
                         VStack(alignment: .leading) {
                             if currentBook?.uuid.uuidString == book.uuid.uuidString {
                                 Text("Current Book")
-                                    .foregroundStyle(.tertiary)
+                                    .foregroundStyle(Color.accentColor)
                             }
                             
                             Text(book.name)
