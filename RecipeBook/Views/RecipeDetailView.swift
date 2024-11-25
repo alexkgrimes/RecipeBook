@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RecipeDetailView: View {
     @ObservedObject var recipeViewModel: RecipeViewModel
+    @Environment(\.dismiss) var dismiss
     @State var showEditor: Bool = false
     @State var cookModeOn: Bool = false
     
@@ -21,45 +22,68 @@ struct RecipeDetailView: View {
             ScrollView {
                 VStack(alignment: .leading) {
                     
-                    RecipeImage(recipeViewModel: recipeViewModel)
-                        .frame(maxWidth: UIScreen.main.bounds.width - 32.0, maxHeight: 200)
-                        .clipShape(.rect(cornerRadius: 25))
-                    
+                    HStack(alignment: .top, spacing: 8.0) {
+                        RecipeImage(recipeViewModel: recipeViewModel)
+                            .frame(width: 120, height: 120)
+                            .clipShape(.rect(cornerRadius: 10))
+
+                        VStack(alignment: .leading) {
+                            Text(recipeViewModel.recipe.title)
+                                .foregroundStyle(.primary)
+                                .font(.title)
+                                .bold()
+                        }
+                    }
                     Spacer(minLength: 16.0)
                     
-                    Toggle("Cook Mode", isOn: $cookModeOn)
-                    
-                    HStack {
-                        Spacer()
+                    HStack(alignment: .center, spacing: 32.0) {
+                        ServingsView(yield: recipeViewModel.recipe.yields)
                         
                         if let totalTime = recipeViewModel.recipe.totalTime {
-                            MetadataView(title: "Total Time", subtitle: "\(totalTime) mins")
-                            Spacer()
+                            TimeView(totalTime: totalTime, prepTime: recipeViewModel.recipe.prepTime, cookTime: recipeViewModel.recipe.cookTime)
                         }
-                        
-                        if let cookTime = recipeViewModel.recipe.cookTime {
-                            MetadataView(title: "Cook Time", subtitle: "\(cookTime) mins")
-                            Spacer()
-                        }
-                        
-                        MetadataView(title: "Servings", subtitle: recipeViewModel.recipe.yields)
                         Spacer()
                     }
                     
+                    Toggle("Cook Mode", isOn: $cookModeOn)
+                        .foregroundStyle(.secondary)
+                    
+                    Rectangle()
+                        .frame(maxWidth: .infinity, maxHeight: 1.0)
+                        .foregroundStyle(.tertiary)
+                    
                     Spacer(minLength: 16.0)
+
                     
                     Text("Ingredients")
+                        .font(.title2)
                         .bold()
+                    
+                    Spacer(minLength: 8.0)
+                    
                     ForEach(recipeViewModel.recipe.ingredients.indices, id: \.self) { index in
                         Text("• \(recipeViewModel.recipe.ingredients[index])")
+                        Spacer(minLength: 4.0)
                     }
                     
                     Spacer(minLength: 16.0)
                     
                     Text("Instructions")
+                        .font(.title2)
                         .bold()
+                    
+                    Spacer(minLength: 8.0)
+                    
                     ForEach(recipeViewModel.recipe.instructions.indices, id: \.self) { index in
-                        Text("\(index + 1). \(recipeViewModel.recipe.instructions[index])")
+                        
+                        HStack(alignment: .top, spacing: 8.0) {
+                            Text("\(index + 1)")
+                                .font(.title3)
+                                .bold()
+                                .foregroundStyle(Color.accentColor)
+                            
+                            Text("\(recipeViewModel.recipe.instructions[index])")
+                        }
                     }
                 }
                 .padding(.all)
@@ -73,13 +97,20 @@ struct RecipeDetailView: View {
                             .foregroundColor(.accentColor)
                     }
                 }
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Close")
+                    }
+                }
             }
             .sheet(isPresented: $showEditor) {
                 RecipeEditorView(editorMode: .update, recipeViewModel: recipeViewModel, saveRecipe: { recipe in
                     recipeViewModel.updateRecipe(recipe: recipe)
                 })
             }
-            .navigationTitle(recipeViewModel.recipe.title)
             .navigationBarTitleDisplayMode(.inline)
             .onChange(of: cookModeOn) {
                 UIApplication.shared.isIdleTimerDisabled = cookModeOn
@@ -91,20 +122,58 @@ struct RecipeDetailView: View {
     }
 }
 
-struct MetadataView: View {
-    let title: String
-    let subtitle: String?
+struct TimeView: View {
+    @State var showAllTimes: Bool = false
+    let totalTime: Int
+    let prepTime: Int?
+    let cookTime: Int?
+    
+    var hasOtherTimes: Bool {
+        prepTime != nil || cookTime != nil
+    }
     
     var body: some View {
-        VStack(alignment: .center) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            if let subtitle = subtitle {
-                Text(subtitle)
-                    .font(.body)
-                    .foregroundStyle(.primary)
+        Button {
+            showAllTimes = true
+        } label: {
+            HStack(alignment: .center, spacing: 8.0) {
+                Image(systemName: "clock")
+                Text("\(totalTime) mins")
             }
+            .foregroundStyle(hasOtherTimes ? Color.accentColor : .secondary)
         }
+        .popover(isPresented: $showAllTimes) {
+            VStack {
+                Text("Total time: \(totalTime) mins")
+                
+                if let prepTime = prepTime {
+                    Text("Prep time: \(prepTime) mins")
+                }
+                
+                if let cookTime = cookTime {
+                    Text("Cook time: \(cookTime) mins")
+                }
+            }
+            .padding()
+            .presentationCompactAdaptation(.popover)
+        }
+    }
+}
+
+struct ServingsView: View {
+    let yield: String
+    
+    var body: some View {
+        
+        HStack(alignment: .center, spacing: 8.0) {
+            Image(systemName: "minus")
+            Text(yield)
+            Image(systemName: "plus")
+        }
+        .foregroundStyle(.secondary)
+        .padding()
+        .background(Capsule()
+            .stroke(lineWidth: 1.0)
+            .foregroundStyle(.secondary))
     }
 }
