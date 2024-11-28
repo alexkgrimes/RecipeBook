@@ -21,6 +21,7 @@
 		5CB7F6912CF246DF006FC01B /* RecipeLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7F6902CF246DF006FC01B /* RecipeLibraryViewModel.swift */; };
 		5CB7F6932CF2F388006FC01B /* RecipeBookEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7F6922CF2F388006FC01B /* RecipeBookEditor.swift */; };
 		5CB7F6952CF2F52A006FC01B /* RecipeBookViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7F6942CF2F52A006FC01B /* RecipeBookViewModel.swift */; };
+		5CB7F69B2CF78D6E006FC01B /* Orientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7F69A2CF78D6E006FC01B /* Orientation.swift */; };
 		5CC1E3242CA9ED9700A2561E /* RecipeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC1E3232CA9ED9700A2561E /* RecipeModel.swift */; };
 		5CC1E3272CA9EE8700A2561E /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC1E3262CA9EE8700A2561E /* Recipe.swift */; };
 		5CC1E3292CA9F06700A2561E /* RecipeEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC1E3282CA9F06700A2561E /* RecipeEditorView.swift */; };
@@ -68,6 +69,7 @@
 		5CB7F6902CF246DF006FC01B /* RecipeLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeLibraryViewModel.swift; sourceTree = "<group>"; };
 		5CB7F6922CF2F388006FC01B /* RecipeBookEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeBookEditor.swift; sourceTree = "<group>"; };
 		5CB7F6942CF2F52A006FC01B /* RecipeBookViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeBookViewModel.swift; sourceTree = "<group>"; };
+		5CB7F69A2CF78D6E006FC01B /* Orientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Orientation.swift; sourceTree = "<group>"; };
 		5CC1E3232CA9ED9700A2561E /* RecipeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeModel.swift; sourceTree = "<group>"; };
 		5CC1E3262CA9EE8700A2561E /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
 		5CC1E3282CA9F06700A2561E /* RecipeEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeEditorView.swift; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 				5CB7F6902CF246DF006FC01B /* RecipeLibraryViewModel.swift */,
 				5CB37C482CDFF28F00A85C11 /* RecipeViewModel.swift */,
 				5CB7F6942CF2F52A006FC01B /* RecipeBookViewModel.swift */,
+				5CB7F69A2CF78D6E006FC01B /* Orientation.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -394,6 +397,7 @@
 				5CB37C442CD47E9400A85C11 /* RecipeBook.swift in Sources */,
 				FA6979E12C7C3B2D007DD2A5 /* RecipeBook.xcdatamodeld in Sources */,
 				5CB7F6912CF246DF006FC01B /* RecipeLibraryViewModel.swift in Sources */,
+				5CB7F69B2CF78D6E006FC01B /* Orientation.swift in Sources */,
 				5CB37C412CCF591B00A85C11 /* LabeledRecipe.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -572,7 +576,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.alexkgrimes.RecipeBook;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -611,7 +616,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.alexkgrimes.RecipeBook;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

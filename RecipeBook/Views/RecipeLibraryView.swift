@@ -11,6 +11,7 @@ import CoreData
 struct RecipeLibraryView: View {
     var managedObjectContext: NSManagedObjectContext
     
+    @Environment(\.dismiss) var dismiss
     @StateObject private var model: RecipeLibraryViewModel
     @State private var showEditor: Bool = false
     @State private var addBook: Bool = false
@@ -25,7 +26,7 @@ struct RecipeLibraryView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             List {
                 ForEach(model.recipeBooks) { book in
                     
@@ -56,13 +57,23 @@ struct RecipeLibraryView: View {
                     }
                 }
             }
+            .listStyle(SidebarListStyle())
             .navigationTitle("Recipe Library")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .automatic) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         addBook = true
                     } label: {
                         Image(systemName: "plus")
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Close")
                     }
                 }
             }

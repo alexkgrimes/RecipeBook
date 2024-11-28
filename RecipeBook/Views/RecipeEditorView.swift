@@ -32,6 +32,15 @@ struct RecipeEditorView: View {
             manualEntryForm
                 .navigationTitle(editorMode == .new ? "New Recipe" : "Update Recipe")
                 .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            editorMode == .new ? Text("Cancel") : Text("Close")
+                        }
+                    }
+                }
         }
     }
     
@@ -97,8 +106,16 @@ struct RecipeEditorView: View {
                 saveRecipe?(recipeViewModel.recipe)
                 dismiss()
             } label: {
-                Text("Save Recipe")
+                HStack {
+                    Spacer()
+                    Text("Save Recipe")
+                        .multilineTextAlignment(.center)
+                    Spacer()
+                }
             }
+            .buttonStyle(.borderedProminent)
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.clear)
         }
     }
     

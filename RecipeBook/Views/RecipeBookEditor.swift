@@ -32,6 +32,15 @@ struct RecipeBookEditorView: View {
             manualEntryForm
                 .navigationTitle(editorMode == .new ? "New Book" : "Update Book")
                 .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            editorMode == .new ? Text("Cancel") : Text("Close")
+                        }
+                    }
+                }
         }
     }
     

@@ -8,16 +8,31 @@
 import Foundation
 import SwiftUI
 
+enum DismissalReason {
+    case cancel
+    case submit
+}
+
 struct URLInputView: View {
     @ObservedObject var recipeViewModel: RecipeViewModel
     @Environment(\.dismiss) var dismiss
     
     @State private var url = ""
+    @State private var dismissalReason: DismissalReason = .cancel
     
     var body: some View {
         NavigationStack {
             urlEntryForm
                 .navigationTitle("Add Recipe")
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Text("Cancel")
+                        }
+                    }
+                }
         }
     }
     

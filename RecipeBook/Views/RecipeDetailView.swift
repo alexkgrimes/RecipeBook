@@ -13,80 +13,44 @@ struct RecipeDetailView: View {
     @State var showEditor: Bool = false
     @State var cookModeOn: Bool = false
     
+    @State private var orientation: Orientation = .portrait
+    @State private var screenSize: CGSize = .zero
+    
     init(recipeViewModel: RecipeViewModel) {
         self.recipeViewModel = recipeViewModel
     }
     
     var body: some View {
+        
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    
-                    HStack(alignment: .top, spacing: 8.0) {
-                        RecipeImage(recipeViewModel: recipeViewModel)
-                            .frame(width: 120, height: 120)
-                            .clipShape(.rect(cornerRadius: 10))
-
-                        VStack(alignment: .leading) {
-                            Text(recipeViewModel.recipe.title)
-                                .foregroundStyle(.primary)
-                                .font(.title)
-                                .bold()
-                        }
+            ScrollView(showsIndicators: false) {
+                if orientation == .portrait {
+                    VStack(alignment: .leading) {
+                        headerView
+                        ingredientsView
+                        instructionsView
                     }
-                    Spacer(minLength: 16.0)
+                    .padding(.all)
+                } else {
                     
-                    HStack(alignment: .center, spacing: 32.0) {
-                        ServingsView(yield: recipeViewModel.recipe.yields)
+                    VStack(alignment: .leading) {
+                        headerView
                         
-                        if let totalTime = recipeViewModel.recipe.totalTime {
-                            TimeView(totalTime: totalTime, prepTime: recipeViewModel.recipe.prepTime, cookTime: recipeViewModel.recipe.cookTime)
-                        }
-                        Spacer()
-                    }
-                    
-                    Toggle("Cook Mode", isOn: $cookModeOn)
-                        .foregroundStyle(.secondary)
-                    
-                    Rectangle()
-                        .frame(maxWidth: .infinity, maxHeight: 1.0)
-                        .foregroundStyle(.tertiary)
-                    
-                    Spacer(minLength: 16.0)
+                        HStack(alignment: .top) {
+                            ingredientsView
 
-                    
-                    Text("Ingredients")
-                        .font(.title2)
-                        .bold()
-                    
-                    Spacer(minLength: 8.0)
-                    
-                    ForEach(recipeViewModel.recipe.ingredients.indices, id: \.self) { index in
-                        Text("• \(recipeViewModel.recipe.ingredients[index])")
-                        Spacer(minLength: 4.0)
-                    }
-                    
-                    Spacer(minLength: 16.0)
-                    
-                    Text("Instructions")
-                        .font(.title2)
-                        .bold()
-                    
-                    Spacer(minLength: 8.0)
-                    
-                    ForEach(recipeViewModel.recipe.instructions.indices, id: \.self) { index in
-                        
-                        HStack(alignment: .top, spacing: 8.0) {
-                            Text("\(index + 1)")
-                                .font(.title3)
-                                .bold()
-                                .foregroundStyle(Color.accentColor)
+                            Rectangle()
+                                .frame(maxWidth: 1.0, maxHeight: .infinity)
+                                .foregroundStyle(.tertiary)
+                                .padding([.leading, .trailing], 16.0)
+
+                            instructionsView
                             
-                            Text("\(recipeViewModel.recipe.instructions[index])")
+                            Spacer()
                         }
                     }
+                    .padding(.all)
                 }
-                .padding(.all)
             }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -95,14 +59,6 @@ struct RecipeDetailView: View {
                     } label: {
                         Image(systemName: "pencil")
                             .foregroundColor(.accentColor)
-                    }
-                }
-                
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Close")
                     }
                 }
             }
@@ -118,6 +74,78 @@ struct RecipeDetailView: View {
             .onDisappear() {
                 cookModeOn = false
             }
+        }
+        .getSize(size: $screenSize, orientation: $orientation)
+    }
+    
+    @ViewBuilder var headerView: some View {
+        HStack(alignment: .top, spacing: 8.0) {
+            RecipeImage(recipeViewModel: recipeViewModel)
+                .frame(width: 120, height: 120)
+                .clipShape(.rect(cornerRadius: 10))
+
+            VStack(alignment: .leading) {
+                Text(recipeViewModel.recipe.title)
+                    .foregroundStyle(.primary)
+                    .font(.title)
+                    .bold()
+            }
+        }
+        Spacer(minLength: 16.0)
+        
+        HStack(alignment: .center, spacing: 32.0) {
+            ServingsView(yield: recipeViewModel.recipe.yields)
+            
+            if let totalTime = recipeViewModel.recipe.totalTime {
+                TimeView(totalTime: totalTime, prepTime: recipeViewModel.recipe.prepTime, cookTime: recipeViewModel.recipe.cookTime)
+            }
+            Spacer()
+        }
+        
+        Toggle("Cook Mode", isOn: $cookModeOn)
+            .foregroundStyle(.secondary)
+        
+        Rectangle()
+            .frame(maxWidth: .infinity, maxHeight: 1.0)
+            .foregroundStyle(.tertiary)
+        
+        Spacer(minLength: 16.0)
+    }
+    
+    @ViewBuilder var ingredientsView: some View {
+        VStack(alignment: .leading) {
+            Text("Ingredients")
+                .font(.title2)
+                .bold()
+                .padding(.bottom, 8.0)
+            
+            ForEach(recipeViewModel.recipe.ingredients.indices, id: \.self) { index in
+                Text("• \(recipeViewModel.recipe.ingredients[index])")
+                Spacer(minLength: 4.0)
+            }
+            
+            Spacer()
+        }
+    }
+    
+    @ViewBuilder var instructionsView: some View {
+        VStack(alignment: .leading) {
+            Text("Instructions")
+                .font(.title2)
+                .bold()
+                .padding(.bottom, 8.0)
+            
+            ForEach(recipeViewModel.recipe.instructions.indices, id: \.self) { index in
+                HStack(alignment: .top, spacing: 8.0) {
+                    Text("\(index + 1)")
+                        .font(.title3)
+                        .bold()
+                        .foregroundStyle(Color.accentColor)
+                    
+                    Text("\(recipeViewModel.recipe.instructions[index])")
+                }
+            }
+            Spacer()
         }
     }
 }

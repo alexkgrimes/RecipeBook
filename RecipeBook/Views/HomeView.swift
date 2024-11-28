@@ -83,7 +83,7 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 ForEach(filteredRecipes) { recipe in
                     RecipeRowView(recipe: recipe, managedObjectContext: managedObjectContext)
@@ -94,6 +94,7 @@ struct HomeView: View {
                     }
                 }
             }
+            .searchable(text: $searchText, placement: .navigationBarDrawer, prompt: "Search")
             .navigationTitle(model.currentBook?.name ?? "")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $inputURL, onDismiss: {
@@ -129,7 +130,6 @@ struct HomeView: View {
                 }
             }
         }
-        .searchable(text: $searchText, prompt: "Search")
         .onAppear {
             model.dataInitialization()
         }
