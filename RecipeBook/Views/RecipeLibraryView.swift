@@ -6,23 +6,17 @@
 //
 
 import SwiftUI
-import CoreData
 
-struct RecipeLibraryView: View {
-    var managedObjectContext: NSManagedObjectContext
-    
+struct RecipeLibraryView: View {    
     @Environment(\.dismiss) var dismiss
-    @StateObject private var model: RecipeLibraryViewModel
+    @StateObject private var model = RecipeLibraryViewModel()
     @State private var showEditor: Bool = false
     @State private var addBook: Bool = false
     @Binding private var currentBook: RecipeBook?
     @State private var selectedBook: RecipeBook? = nil
     
-    init(managedObjectContext: NSManagedObjectContext, currentBook: Binding<RecipeBook?>) {
-        let model = RecipeLibraryViewModel(managedObjectContext: managedObjectContext)
-        _model = StateObject(wrappedValue: model)
+    init(currentBook: Binding<RecipeBook?>) {
         _currentBook = currentBook
-        self.managedObjectContext = managedObjectContext
     }
     
     var body: some View {
@@ -79,13 +73,12 @@ struct RecipeLibraryView: View {
             }
             .sheet(isPresented: $showEditor) {
                 RecipeBookEditorView(editorMode: .update, 
-                                     recipeBookViewModel: RecipeBookViewModel(recipeBook: selectedBook,
-                                                                              managedObjectContext: managedObjectContext))
+                                     recipeBookViewModel: RecipeBookViewModel(recipeBook: selectedBook))
                     .presentationDetents([.fraction(0.3)])
             }
             .sheet(isPresented: $addBook) {
                 RecipeBookEditorView(editorMode: .new,
-                                     recipeBookViewModel: RecipeBookViewModel(managedObjectContext: managedObjectContext))
+                                     recipeBookViewModel: RecipeBookViewModel())
                 .presentationDetents([.fraction(0.3)])
             }
         }

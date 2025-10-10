@@ -7,44 +7,20 @@
 
 import Foundation
 import SwiftUI
-import CoreData
 
+@MainActor
 class RecipeBookViewModel: ObservableObject {
-    var managedObjectContext: NSManagedObjectContext
-    
     @Published var recipeBook: RecipeBook
     
-    init(recipeBook: RecipeBook? = nil, managedObjectContext: NSManagedObjectContext) {
-        self.managedObjectContext = managedObjectContext
+    init(recipeBook: RecipeBook? = nil) {
         self.recipeBook = recipeBook ?? RecipeBook.defaultBook
     }
     
     func updateBook() {
-
-        let fetchRequest = RecipeBookMO.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "uuid == %@", recipeBook.uuid.uuidString)
-        guard let recipeBookMO = try? managedObjectContext.fetch(fetchRequest).first else {
-            return
-        }
-        recipeBookMO.setValue(recipeBook.name, forKeyPath: "name")
-
-       do {
-           try managedObjectContext.save()
-       } catch let error as NSError  {
-           print("Could not save \(error), \(error.userInfo)")
-       }
+        // TODO: when we have more than one book
    }
     
     func addBook() {
-        let recipeBookMO = RecipeBookMO(context: managedObjectContext)
-        
-        recipeBookMO.setValue(recipeBook.uuid, forKeyPath: "uuid")
-        recipeBookMO.setValue(recipeBook.name, forKeyPath: "name")
-        
-        do {
-            try managedObjectContext.save()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
-        }
+        // TODO: when we have more than one book
     }
 }

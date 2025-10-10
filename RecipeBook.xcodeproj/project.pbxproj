@@ -27,7 +27,6 @@
 		5CC1E3292CA9F06700A2561E /* RecipeEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC1E3282CA9F06700A2561E /* RecipeEditorView.swift */; };
 		FA6979DC2C7C3B2D007DD2A5 /* RecipeBookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6979DB2C7C3B2D007DD2A5 /* RecipeBookApp.swift */; };
 		FA6979DE2C7C3B2D007DD2A5 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6979DD2C7C3B2D007DD2A5 /* PersistenceController.swift */; };
-		FA6979E12C7C3B2D007DD2A5 /* RecipeBook.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FA6979DF2C7C3B2D007DD2A5 /* RecipeBook.xcdatamodeld */; };
 		FA6979E32C7C3B2D007DD2A5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6979E22C7C3B2D007DD2A5 /* HomeView.swift */; };
 		FA6979E52C7C3B3A007DD2A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA6979E42C7C3B3A007DD2A5 /* Assets.xcassets */; };
 		FA6979E92C7C3B3A007DD2A5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA6979E82C7C3B3A007DD2A5 /* Preview Assets.xcassets */; };
@@ -54,6 +53,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5C2F9B252CFAA06D001E234D /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		5C75140D2CAA66BB00D9ACE0 /* WebService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
 		5CB37C2E2CBB830400A85C11 /* URLInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLInputView.swift; sourceTree = "<group>"; };
 		5CB37C342CBC525B00A85C11 /* RecipeRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRowView.swift; sourceTree = "<group>"; };
@@ -76,7 +76,6 @@
 		FA6979D82C7C3B2D007DD2A5 /* RecipeBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecipeBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA6979DB2C7C3B2D007DD2A5 /* RecipeBookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeBookApp.swift; sourceTree = "<group>"; };
 		FA6979DD2C7C3B2D007DD2A5 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
-		FA6979E02C7C3B2D007DD2A5 /* RecipeBook.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RecipeBook.xcdatamodel; sourceTree = "<group>"; };
 		FA6979E22C7C3B2D007DD2A5 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		FA6979E42C7C3B3A007DD2A5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FA6979E62C7C3B3A007DD2A5 /* RecipeBook.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RecipeBook.entitlements; sourceTree = "<group>"; };
@@ -113,6 +112,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5C2F9B242CFAA06D001E234D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5C2F9B252CFAA06D001E234D /* CloudKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		5C75140C2CAA664000D9ACE0 /* WebService */ = {
 			isa = PBXGroup;
 			children = (
@@ -171,7 +178,6 @@
 				FA6979E42C7C3B3A007DD2A5 /* Assets.xcassets */,
 				5CB37C422CD476AC00A85C11 /* Info.plist */,
 				FA6979E62C7C3B3A007DD2A5 /* RecipeBook.entitlements */,
-				FA6979DF2C7C3B2D007DD2A5 /* RecipeBook.xcdatamodeld */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -192,6 +198,7 @@
 				FA6979DA2C7C3B2D007DD2A5 /* RecipeBook */,
 				FA6979F12C7C3B3A007DD2A5 /* RecipeBookTests */,
 				FA6979FB2C7C3B3A007DD2A5 /* RecipeBookUITests */,
+				5C2F9B242CFAA06D001E234D /* Frameworks */,
 				FA6979D92C7C3B2D007DD2A5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -395,7 +402,6 @@
 				5CB37C462CD7E5E900A85C11 /* RecipeLibraryView.swift in Sources */,
 				FA6979E32C7C3B2D007DD2A5 /* HomeView.swift in Sources */,
 				5CB37C442CD47E9400A85C11 /* RecipeBook.swift in Sources */,
-				FA6979E12C7C3B2D007DD2A5 /* RecipeBook.xcdatamodeld in Sources */,
 				5CB7F6912CF246DF006FC01B /* RecipeLibraryViewModel.swift in Sources */,
 				5CB7F69B2CF78D6E006FC01B /* Orientation.swift in Sources */,
 				5CB37C412CCF591B00A85C11 /* LabeledRecipe.swift in Sources */,
@@ -550,10 +556,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "RecipeBook/Supporting Files/RecipeBook.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RecipeBook/Preview Content\"";
-				DEVELOPMENT_TEAM = V8LG346P7T;
+				DEVELOPMENT_TEAM = MU2LBB6Y2K;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -573,7 +580,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alexkgrimes.RecipeBook;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mattwparas.RecipeBook;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -590,10 +597,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "RecipeBook/Supporting Files/RecipeBook.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RecipeBook/Preview Content\"";
-				DEVELOPMENT_TEAM = V8LG346P7T;
+				DEVELOPMENT_TEAM = MU2LBB6Y2K;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -613,7 +621,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.alexkgrimes.RecipeBook;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mattwparas.RecipeBook;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -754,19 +762,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		FA6979DF2C7C3B2D007DD2A5 /* RecipeBook.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				FA6979E02C7C3B2D007DD2A5 /* RecipeBook.xcdatamodel */,
-			);
-			currentVersion = FA6979E02C7C3B2D007DD2A5 /* RecipeBook.xcdatamodel */;
-			path = RecipeBook.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = FA6979D02C7C3B2D007DD2A5 /* Project object */;
 }

@@ -16,11 +16,6 @@ final class RecipeBook: Identifiable {
         self.name = name
     }
     
-    init(from recipeBookMO: RecipeBookMO) {
-        self.uuid = recipeBookMO.uuid ?? UUID()
-        self.name = recipeBookMO.name ?? ""
-    }
-    
     static var defaultBook: RecipeBook {
         return RecipeBook(uuid: UUID(), name: "")
     }

@@ -6,14 +6,13 @@
 //
 
 import SwiftUI
-import CoreData
 
 struct RecipeRowView: View {
     @ObservedObject var recipeViewModel: RecipeViewModel
     @State var displayDetail: Bool = false
     
-    init(recipe: Recipe, managedObjectContext: NSManagedObjectContext) {
-        recipeViewModel = RecipeViewModel(recipe: recipe, managedObjectContext: managedObjectContext)
+    init(recipe: Recipe) {
+        recipeViewModel = RecipeViewModel(recipe: recipe)
     }
     
     var body: some View {

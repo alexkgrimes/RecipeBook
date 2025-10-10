@@ -46,7 +46,7 @@ struct URLInputView: View {
             Button {
                 print("Submit")
                 Task {
-                    recipeViewModel.recipe = await WebService.fetchRecipe(with: url)
+                    recipeViewModel.recipe = await WebService.parseRecipe(with: url)
                     dismiss()
                 }
             } label: {

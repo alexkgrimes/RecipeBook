@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RecipeModel: Decodable {
+struct ScrapedRecipeModel: Decodable {
     let instructions: String?
     let ingredients: [String]?
     let image: URL?
@@ -25,4 +25,49 @@ struct RecipeModel: Decodable {
     let ratings: Double?
     let siteName: String?
     let yields: String?
+}
+
+// ALEX TODO: work on making sure these all work
+struct RecipeModel: Codable {
+    let id: String?
+    let timestamp: String?
+    let instructions: [String]?
+    let ingredients: [String]?
+    let imageURL: URL?
+//    let imageData: Data?
+    let cookTime: Int?
+    let cuisine: String?
+    let prepTime: Int?
+    let totalTime: Int?
+    let title: String?
+    let recipeDescription: String?
+    let author: String?
+//    let url: String?
+//    let category: String?
+//    let nutrients: [String: String]?
+//    let ratings: Double?
+//    let siteName: String?
+//    let yields: String?
+    
+    init(from recipe: Recipe) {
+        self.id = recipe.uuid.uuidString
+        self.timestamp = recipe.timestamp.ISO8601Format()
+        self.instructions = recipe.instructions
+        self.ingredients = recipe.ingredients
+        self.imageURL = recipe.imageURL
+//        self.imageData = recipe.image?.base64EncodedData()
+        self.cookTime = recipe.cookTime
+        self.cuisine = recipe.cuisine
+        self.prepTime = recipe.prepTime
+        self.totalTime = recipe.totalTime
+        self.title = recipe.title
+        self.recipeDescription = recipe.recipeDescription
+        self.author = recipe.author
+//        self.url = recipe.url?.absoluteString
+//        self.category = recipe.category
+//        self.nutrients = recipe.nutrients
+//        self.ratings = recipe.ratings
+//        self.siteName = recipe.siteName
+//        self.yields = recipe.yields
+    }
 }

@@ -9,12 +9,10 @@ import Foundation
 import Combine
 import SwiftUI
 import PhotosUI
-import CoreData
 
 @MainActor
 class RecipeViewModel: ObservableObject {
     var cancellables = Set<AnyCancellable>()
-    var managedObjectContext: NSManagedObjectContext
     
     @Published var recipe: Recipe
     
@@ -24,9 +22,8 @@ class RecipeViewModel: ObservableObject {
         }
     }
     
-    init(recipe: Recipe? = nil, managedObjectContext: NSManagedObjectContext) {
+    init(recipe: Recipe? = nil) {
         self.recipe = recipe ?? Recipe.emptyRecipe()
-        self.managedObjectContext = managedObjectContext
     }
     
     private func setImage(from selection: PhotosPickerItem?) {
@@ -57,37 +54,10 @@ class RecipeViewModel: ObservableObject {
     }
     
     func updateRecipe(recipe: Recipe) {
-
-        let fetchRequest = RecipeMO.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "uuid == %@", recipe.uuid.uuidString)
-        guard let recipeMO = try? managedObjectContext.fetch(fetchRequest).first else {
-            return
+        Task {
+            // This is updating a recipe that already exists
+            await WebService.addRecipe(newRecipe: recipe)
+            // TODO: reload data?
         }
-        
-        recipeMO.setValue(recipe.uuid, forKeyPath: "uuid")
-        recipeMO.setValue(recipe.timestamp, forKeyPath: "timestamp")
-        recipeMO.setValue(recipe.instructions, forKeyPath: "instructions")
-        recipeMO.setValue(recipe.ingredients, forKeyPath: "ingredients")
-        recipeMO.setValue(recipe.imageURL, forKeyPath: "imageURL")
-        recipeMO.setValue(recipe.image, forKeyPath: "image")
-        recipeMO.setValue(recipe.cookTime, forKeyPath: "cookTime")
-        recipeMO.setValue(recipe.cuisine, forKeyPath: "cuisine")
-        recipeMO.setValue(recipe.prepTime, forKeyPath: "prepTime")
-        recipeMO.setValue(recipe.totalTime, forKeyPath: "totalTime")
-        recipeMO.setValue(recipe.title, forKeyPath: "title")
-        recipeMO.setValue(recipe.recipeDescription, forKeyPath: "recipeDescription")
-        recipeMO.setValue(recipe.author, forKeyPath: "author")
-        recipeMO.setValue(recipe.url, forKeyPath: "url")
-        recipeMO.setValue(recipe.category, forKeyPath: "category")
-        recipeMO.setValue(recipe.nutrients, forKeyPath: "nutrients")
-        recipeMO.setValue(recipe.ratings, forKeyPath: "ratings")
-        recipeMO.setValue(recipe.siteName, forKeyPath: "siteName")
-        recipeMO.setValue(recipe.yields, forKeyPath: "yields")
-
-       do {
-           try managedObjectContext.save()
-       } catch let error as NSError  {
-           print("Could not save \(error), \(error.userInfo)")
-       }
    }
 }

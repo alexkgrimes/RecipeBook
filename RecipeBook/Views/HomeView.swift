@@ -6,18 +6,16 @@
 //
 
 import SwiftUI
-import CoreData
 
 struct HomeView: View {
-    @Environment(\.managedObjectContext) var managedObjectContext
-    @ObservedObject private var recipeViewModel: RecipeViewModel
+    @ObservedObject private var recipeViewModel = RecipeViewModel()
     
     @State private var inputURL: Bool = false
     @State private var inputRecipe: Bool = false
     @State private var editRecipeBook: Bool = false
 
     @State private var searchText = ""
-    @StateObject private var model: HomeViewModel
+    @StateObject private var model = HomeViewModel()
     
     var filteredRecipes: [Recipe] {
         // Strip leading/trailing whitespace from `searchText`
@@ -74,19 +72,12 @@ struct HomeView: View {
         
         return labeledRecipes.map { $0.recipe }
     }
-    
-    init(managedObjectContext: NSManagedObjectContext) {
-        let model = HomeViewModel(managedObjectContext: managedObjectContext)
-        _model = StateObject(wrappedValue: model)
-        
-        recipeViewModel = RecipeViewModel(managedObjectContext: managedObjectContext)
-    }
 
     var body: some View {
         NavigationStack {
             List {
                 ForEach(filteredRecipes) { recipe in
-                    RecipeRowView(recipe: recipe, managedObjectContext: managedObjectContext)
+                    RecipeRowView(recipe: recipe)
                 }
                 .onDelete { (indexSet) in
                     for index in indexSet {
@@ -110,7 +101,7 @@ struct HomeView: View {
                 })
             }
             .sheet(isPresented: $editRecipeBook) {
-                RecipeLibraryView(managedObjectContext: managedObjectContext, currentBook: $model.currentBook)
+                RecipeLibraryView(currentBook: $model.currentBook)
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -142,9 +133,3 @@ private let itemFormatter: DateFormatter = {
     formatter.timeStyle = .medium
     return formatter
 }()
-
-//struct HomeView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        HomeView(modelContext: try! ModelContext(ModelContainer.init()))
-//    }
-//}

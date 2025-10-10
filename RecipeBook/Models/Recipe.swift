@@ -71,52 +71,58 @@ final class Recipe: Identifiable, Equatable {
         self.yields = yields
     }
     
-    init(from recipeModel: RecipeModel) {
+    init(from scrapedRecipeModel: ScrapedRecipeModel) {
         
         var instructions = [String]()
-        recipeModel.instructions?.enumerateLines { (line, stop) -> () in
+        scrapedRecipeModel.instructions?.enumerateLines { (line, stop) -> () in
             instructions.append(line)
         }
         
         self.timestamp = .now
         self.instructions = instructions
-        self.ingredients = recipeModel.ingredients ?? []
-        self.imageURL = recipeModel.image
-        self.cookTime = recipeModel.cookTime ?? 0
-        self.cuisine = recipeModel.cuisine ?? ""
-        self.prepTime = recipeModel.prepTime ?? 0
-        self.totalTime = recipeModel.totalTime ?? 0
-        self.title = recipeModel.title ?? ""
-        self.recipeDescription = recipeModel.description
-        self.author = recipeModel.author
-        self.url = recipeModel.canonicalUrl
-        self.category = recipeModel.category
-        self.nutrients = recipeModel.nutrients
-        self.ratings = recipeModel.ratings
-        self.siteName = recipeModel.siteName
-        self.yields = recipeModel.yields ?? ""
+        self.ingredients = scrapedRecipeModel.ingredients ?? []
+        self.imageURL = scrapedRecipeModel.image
+        self.cookTime = scrapedRecipeModel.cookTime ?? 0
+        self.cuisine = scrapedRecipeModel.cuisine ?? ""
+        self.prepTime = scrapedRecipeModel.prepTime ?? 0
+        self.totalTime = scrapedRecipeModel.totalTime ?? 0
+        self.title = scrapedRecipeModel.title ?? ""
+        self.recipeDescription = scrapedRecipeModel.description
+        self.author = scrapedRecipeModel.author
+        self.url = scrapedRecipeModel.canonicalUrl
+        self.category = scrapedRecipeModel.category
+        self.nutrients = scrapedRecipeModel.nutrients
+        self.ratings = scrapedRecipeModel.ratings
+        self.siteName = scrapedRecipeModel.siteName
+        self.yields = scrapedRecipeModel.yields ?? ""
     }
     
-    init(from recipeMO: RecipeMO) {
-        self.uuid = recipeMO.uuid ?? UUID()
-        self.timestamp = recipeMO.timestamp ?? .now
-        self.instructions = recipeMO.instructions as? [String] ?? []
-        self.ingredients = recipeMO.ingredients as? [String] ?? []
-        self.imageURL = recipeMO.imageURL
-        self.image = recipeMO.image
-        self.cookTime = Int(truncatingIfNeeded: recipeMO.cookTime)
-        self.cuisine = recipeMO.cuisine ?? ""
-        self.prepTime = Int(truncatingIfNeeded: recipeMO.prepTime)
-        self.totalTime = Int(truncatingIfNeeded: recipeMO.totalTime)
-        self.title = recipeMO.title ?? ""
-        self.recipeDescription = recipeMO.recipeDescription
-        self.author = recipeMO.author
-        self.url = recipeMO.url
-        self.category = recipeMO.category
-        self.nutrients = recipeMO.nutrients as? [String: String] ?? [:]
-        self.ratings = recipeMO.ratings
-        self.siteName = recipeMO.siteName
-        self.yields = recipeMO.yields ?? ""
+    init(from recipeModel: RecipeModel) {
+        if let uuid = recipeModel.id {
+            self.uuid = UUID(uuidString: uuid) ?? UUID()
+        }
+        if let timestamp = recipeModel.timestamp {
+            self.timestamp =  ISO8601DateFormatter().date(from: timestamp) ?? Date.now
+        }
+        self.instructions = recipeModel.instructions ?? []
+        self.ingredients = recipeModel.ingredients ?? []
+        self.imageURL = recipeModel.imageURL
+//        self.image = recipeModel.imageData
+        self.cookTime = recipeModel.cookTime
+        self.cuisine = recipeModel.cuisine ?? ""
+        self.prepTime = recipeModel.prepTime
+        self.totalTime = recipeModel.totalTime
+        self.title = recipeModel.title ?? ""
+        self.recipeDescription = recipeModel.recipeDescription
+        self.author = recipeModel.author
+//        if let urlString = recipeModel.url {
+//            self.url = URL(string: urlString)
+//        }
+//        self.category = recipeModel.category
+//        self.nutrients = recipeModel.nutrients
+//        self.ratings = recipeModel.ratings
+//        self.siteName = recipeModel.siteName
+//        self.yields = recipeModel.yields ?? ""
     }
     
     static func emptyRecipe() -> Recipe {
