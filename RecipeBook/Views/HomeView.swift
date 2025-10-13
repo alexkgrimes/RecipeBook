@@ -44,13 +44,17 @@ struct HomeView: View {
                 continue
             }
             
-            if let recipeDescription = recipe.recipeDescription, smartSearchMatcher.matches(recipeDescription) {
+            if !recipe.recipeDescription.isEmpty, smartSearchMatcher.matches(recipe.recipeDescription) {
                 labeledRecipes.append(LabeledRecipe(recipe: recipe, priority: 2))
                 continue
             }
             
-            let ingredientsList = recipe.ingredients.joined(separator: " ")
-            if smartSearchMatcher.matches(ingredientsList) {
+            var completeIngredientsList = ""
+            for (_, ingredientsList) in recipe.ingredients {
+                let subList = ingredientsList.joined(separator: " ")
+                completeIngredientsList.append(subList)
+            }
+            if smartSearchMatcher.matches(completeIngredientsList) {
                 labeledRecipes.append(LabeledRecipe(recipe: recipe, priority: 3))
                 continue
             }

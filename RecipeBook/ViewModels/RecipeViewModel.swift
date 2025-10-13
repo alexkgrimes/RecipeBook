@@ -12,10 +12,7 @@ import PhotosUI
 
 @MainActor
 class RecipeViewModel: ObservableObject {
-    var cancellables = Set<AnyCancellable>()
-    
     @Published var recipe: Recipe
-    
     @Published var imageSelection: PhotosPickerItem? = nil {
         didSet {
             setImage(from: imageSelection)
@@ -46,9 +43,9 @@ class RecipeViewModel: ObservableObject {
         }
     }
     
-    public func addIngredientIfNeeded() {
-        if recipe.canAddIngredient {
-            recipe.ingredients.append("")
+    public func addIngredientIfNeeded(to section: String) {
+        if recipe.canAddIngredient(to: section) {
+            recipe.ingredients[section]?.append("")
             objectWillChange.send()
         }
     }
@@ -57,7 +54,45 @@ class RecipeViewModel: ObservableObject {
         Task {
             // This is updating a recipe that already exists
             await WebService.addRecipe(newRecipe: recipe)
-            // TODO: reload data?
+            self.recipe = recipe
         }
-   }
+    }
+    
+    func increaseYield() {
+        updateYieldNumber(increment: true)
+    }
+    
+    func decreaseYield() {
+        updateYieldNumber(increment: false)
+    }
+    
+    private func updateYieldNumber(increment: Bool) {
+        let updatedYields = recipe.yields.byOffsettingNumbersBy(increment ? 1 : -1)
+        print("\(updatedYields)")
+        recipe.yields = updatedYields
+        // TODO: actually increase the amounts as well :/
+        objectWillChange.send()
+    }
+}
+
+extension String {
+    func byOffsettingNumbersBy(_ offset: Int) -> String {
+        let scanner = Scanner(string: self)
+
+        var output = ""
+
+        while !scanner.isAtEnd {
+            if let text = scanner.scanCharacters(from: CharacterSet.decimalDigits.inverted) {
+                output += text
+            } else if let int = scanner.scanInt() {
+                output += String(int + offset)
+            }
+            
+            if !scanner.isAtEnd {
+                output += " "
+            }
+        }
+
+        return output
+    }
 }

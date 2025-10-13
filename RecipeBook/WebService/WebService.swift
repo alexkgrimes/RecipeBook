@@ -36,10 +36,10 @@ final class WebService {
             }
             
             // DEBUG
-            if let jsonString = String(data: data, encoding: .utf8) {
-                print("Encoded JSON:")
-                print(jsonString)
-            }
+//            if let jsonString = String(data: data, encoding: .utf8) {
+//                print("Encoded JSON:")
+//                print(jsonString)
+//            }
             // DEBUG
             
             let decoder = JSONDecoder()
@@ -76,10 +76,10 @@ final class WebService {
             jsonEncoder.outputFormatting = .prettyPrinted
             jsonData = try jsonEncoder.encode(jsonDict)
             // Convert the Data to a String for printing
-            if let jsonData, let jsonString = String(data: jsonData, encoding: .utf8) {
-                print("Encoded JSON new recipe:")
-                print(jsonString)
-            }
+//            if let jsonData, let jsonString = String(data: jsonData, encoding: .utf8) {
+//                print("Encoded JSON new recipe:")
+//                print(jsonString)
+//            }
         } catch {
             completion()
             print("Error encoding model to JSON: \(error)")

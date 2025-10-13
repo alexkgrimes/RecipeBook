@@ -37,7 +37,17 @@ struct RecipeEditorView: View {
                         Button {
                             dismiss()
                         } label: {
-                            editorMode == .new ? Text("Cancel") : Text("Close")
+                            Image(systemName: "xmark")
+                        }
+                    }
+                    
+                    if editorMode == .update {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button {
+                                dismiss()
+                            } label: {
+                                Image(systemName: "checkmark")
+                            }
                         }
                     }
                 }
@@ -55,6 +65,10 @@ struct RecipeEditorView: View {
         
             Section("Title") {
                 TextField("Title", text: $recipeViewModel.recipe.title)
+            }
+            
+            Section("Description") {
+                TextField("Description", text: $recipeViewModel.recipe.recipeDescription, axis: .vertical)
             }
             
             Section("Yields") {
@@ -77,15 +91,7 @@ struct RecipeEditorView: View {
             }
             
             Section("Ingredients") {
-                ForEach($recipeViewModel.recipe.ingredients.indices, id: \.self) { index in
-                    TextField("Enter ingredient", text: $recipeViewModel.recipe.ingredients[index], axis: .vertical)
-                }
-                
-                Button {
-                    recipeViewModel.addIngredientIfNeeded()
-                } label: {
-                    Text("Add Ingredient")
-                }
+                ingredientsEditorView
             }
             
             Section("Instructions") {
@@ -101,7 +107,9 @@ struct RecipeEditorView: View {
             }
             
             Button {
-                recipeViewModel.recipe.ingredients = recipeViewModel.recipe.ingredients.filter { !$0.isEmpty }
+                for (label, _) in recipeViewModel.recipe.ingredients {
+                    recipeViewModel.recipe.ingredients[label] = recipeViewModel.recipe.ingredients[label]?.filter { !$0.isEmpty }
+                }
                 recipeViewModel.recipe.instructions = recipeViewModel.recipe.instructions.filter { !$0.isEmpty }
                 saveRecipe?(recipeViewModel.recipe)
                 dismiss()
@@ -121,6 +129,35 @@ struct RecipeEditorView: View {
     
     var imageButtonString: String {
         return recipeViewModel.recipe.hasImage ? "Edit Image" : "Add Image"
+    }
+    
+    @ViewBuilder var ingredientsEditorView: some View {
+        ForEach(recipeViewModel.recipe.ingredientSectionNames.indices, id: \.self) { sectionIndex in
+            let name = recipeViewModel.recipe.ingredientSectionNames[sectionIndex]
+            if !name.isEmpty {
+                Text("\(name)")
+                    .listStyle(.plain)
+            }
+            
+            if let ingredientsList = recipeViewModel.recipe.ingredients[name] {
+                ForEach(ingredientsList.indices, id: \.self) { index in
+                    TextField("Enter ingredient", text: self.binding(for: name)[index], axis: .vertical)
+                }
+                EmptyView()
+            }
+            
+            Button {
+                recipeViewModel.addIngredientIfNeeded(to: name)
+            } label: {
+                Text("Add Ingredient")
+            }
+        }
+    }
+    
+    private func binding(for key: String) -> Binding<[String]> {
+        return .init(
+            get: { self.recipeViewModel.recipe.ingredients[key, default: []] },
+            set: { self.recipeViewModel.recipe.ingredients[key] = $0 })
     }
 }
 

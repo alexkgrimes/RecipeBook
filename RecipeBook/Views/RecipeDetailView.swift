@@ -10,6 +10,7 @@ import SwiftUI
 struct RecipeDetailView: View {
     @ObservedObject var recipeViewModel: RecipeViewModel
     @Environment(\.dismiss) var dismiss
+    @Environment(\.openURL) var openURL
     @State var showEditor: Bool = false
     @State var cookModeOn: Bool = false
     
@@ -76,6 +77,7 @@ struct RecipeDetailView: View {
             }
         }
         .getSize(size: $screenSize, orientation: $orientation)
+        .environmentObject(recipeViewModel)
     }
     
     @ViewBuilder var headerView: some View {
@@ -89,6 +91,14 @@ struct RecipeDetailView: View {
                     .foregroundStyle(.primary)
                     .font(.title)
                     .bold()
+                if let url = recipeViewModel.recipe.url {
+                    Button {
+                        openURL(url)
+                    } label: {
+                        Text("View Original Recipe")
+                            .foregroundStyle(Color.accentColor)
+                    }
+                }
             }
         }
         Spacer(minLength: 16.0)
@@ -105,6 +115,10 @@ struct RecipeDetailView: View {
         Toggle("Cook Mode", isOn: $cookModeOn)
             .foregroundStyle(.secondary)
         
+        if !recipeViewModel.recipe.recipeDescription.isEmpty {
+            Text(recipeViewModel.recipe.recipeDescription)
+        }
+
         Rectangle()
             .frame(maxWidth: .infinity, maxHeight: 1.0)
             .foregroundStyle(.tertiary)
@@ -119,9 +133,15 @@ struct RecipeDetailView: View {
                 .bold()
                 .padding(.bottom, 8.0)
             
-            ForEach(recipeViewModel.recipe.ingredients.indices, id: \.self) { index in
-                Text("• \(recipeViewModel.recipe.ingredients[index])")
-                Spacer(minLength: 4.0)
+            ForEach(recipeViewModel.recipe.ingredientSectionNames.indices, id: \.self) { sectionIndex in
+                let name = recipeViewModel.recipe.ingredientSectionNames[sectionIndex]
+                if !name.isEmpty {
+                    Text("\(name)")
+                }
+                ForEach(recipeViewModel.recipe.ingredients[name]!.indices, id: \.self) { index in
+                    Text("• \(recipeViewModel.recipe.ingredients[name]![index])")
+                    Spacer(minLength: 4.0)
+                }
             }
             
             Spacer()
@@ -189,17 +209,26 @@ struct TimeView: View {
 }
 
 struct ServingsView: View {
+    @EnvironmentObject var recipeViewModel: RecipeViewModel
     let yield: String
     
     var body: some View {
         
-        HStack(alignment: .center, spacing: 8.0) {
-            Image(systemName: "minus")
+        HStack(alignment: .center, spacing: 12.0) {
+            Button {
+                recipeViewModel.decreaseYield()
+            } label: {
+                Image(systemName: "minus")
+            }
             Text(yield)
-            Image(systemName: "plus")
+            Button {
+                recipeViewModel.increaseYield()
+            } label: {
+                Image(systemName: "plus")
+            }
         }
         .foregroundStyle(.secondary)
-        .padding()
+        .padding(.all, 6.0)
         .background(Capsule()
             .stroke(lineWidth: 1.0)
             .foregroundStyle(.secondary))

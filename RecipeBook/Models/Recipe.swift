@@ -12,7 +12,8 @@ final class Recipe: Identifiable, Equatable {
     var uuid: UUID = UUID()
     var timestamp: Date = Date.now
     var instructions: [String] = []
-    var ingredients: [String] = []
+    var ingredientSectionNames: [String] = [""]
+    var ingredients: [String: [String]] = ["":[]]
     var imageURL: URL?
     var image: Data?
     var cookTime: Int?
@@ -20,12 +21,11 @@ final class Recipe: Identifiable, Equatable {
     var prepTime: Int?
     var totalTime: Int?
     var title: String = ""
-    var recipeDescription: String?
+    var recipeDescription: String = ""
     var author: String?
     var url: URL?
     var category: String?
     var nutrients: [String: String]?
-    var ratings: Double?
     var siteName: String?
     var yields: String = ""
     
@@ -33,6 +33,7 @@ final class Recipe: Identifiable, Equatable {
         return lhs.uuid == rhs.uuid &&
             lhs.timestamp == rhs.timestamp &&
             lhs.instructions == rhs.instructions &&
+            lhs.ingredientSectionNames == rhs.ingredientSectionNames &&
             lhs.ingredients == rhs.ingredients &&
             lhs.imageURL == rhs.imageURL &&
             lhs.image == rhs.image &&
@@ -46,14 +47,14 @@ final class Recipe: Identifiable, Equatable {
             lhs.url == rhs.url &&
             lhs.category == rhs.category &&
             lhs.nutrients == rhs.nutrients &&
-            lhs.ratings == rhs.ratings &&
             lhs.siteName == rhs.siteName &&
             lhs.yields == rhs.yields
     }
     
-    init(instructions: [String], ingredients: [String], imageURL: URL?, cookTime: Int?, cuisine: String, prepTime: Int?, totalTime: Int?, title: String, recipeDescription: String?, author: String?, url: URL?, category: String?, nutrients: [String: String]?, ratings: Double?, siteName: String?, yields: String) {
+    init(instructions: [String], ingredients: [String: [String]], ingredientSectionNames: [String], imageURL: URL?, cookTime: Int?, cuisine: String, prepTime: Int?, totalTime: Int?, title: String, recipeDescription: String, author: String?, url: URL?, category: String?, nutrients: [String: String]?, siteName: String?, yields: String) {
         self.timestamp = .now
         self.instructions = instructions
+        self.ingredientSectionNames = ingredientSectionNames
         self.ingredients = ingredients
         self.imageURL = imageURL
         self.cookTime = cookTime
@@ -66,7 +67,6 @@ final class Recipe: Identifiable, Equatable {
         self.url = url
         self.category = category
         self.nutrients = nutrients
-        self.ratings = ratings
         self.siteName = siteName
         self.yields = yields
     }
@@ -80,19 +80,21 @@ final class Recipe: Identifiable, Equatable {
         
         self.timestamp = .now
         self.instructions = instructions
-        self.ingredients = scrapedRecipeModel.ingredients ?? []
+        self.ingredientSectionNames = [""]
+        if let ingredients = scrapedRecipeModel.ingredients {
+            self.ingredients = ["": ingredients]
+        }
         self.imageURL = scrapedRecipeModel.image
         self.cookTime = scrapedRecipeModel.cookTime ?? 0
         self.cuisine = scrapedRecipeModel.cuisine ?? ""
         self.prepTime = scrapedRecipeModel.prepTime ?? 0
         self.totalTime = scrapedRecipeModel.totalTime ?? 0
         self.title = scrapedRecipeModel.title ?? ""
-        self.recipeDescription = scrapedRecipeModel.description
+        self.recipeDescription = scrapedRecipeModel.description ?? ""
         self.author = scrapedRecipeModel.author
         self.url = scrapedRecipeModel.canonicalUrl
         self.category = scrapedRecipeModel.category
         self.nutrients = scrapedRecipeModel.nutrients
-        self.ratings = scrapedRecipeModel.ratings
         self.siteName = scrapedRecipeModel.siteName
         self.yields = scrapedRecipeModel.yields ?? ""
     }
@@ -104,29 +106,32 @@ final class Recipe: Identifiable, Equatable {
         if let timestamp = recipeModel.timestamp {
             self.timestamp =  ISO8601DateFormatter().date(from: timestamp) ?? Date.now
         }
+        self.ingredientSectionNames = recipeModel.ingredientSectionNames ?? [""]
         self.instructions = recipeModel.instructions ?? []
-        self.ingredients = recipeModel.ingredients ?? []
+        self.ingredients = recipeModel.ingredients ?? [:]
         self.imageURL = recipeModel.imageURL
-//        self.image = recipeModel.imageData
+        let base64EncodedString = recipeModel.imageData
+        if let base64EncodedString, let data = Data(base64Encoded: base64EncodedString) {
+            self.image = data
+        }
         self.cookTime = recipeModel.cookTime
         self.cuisine = recipeModel.cuisine ?? ""
         self.prepTime = recipeModel.prepTime
         self.totalTime = recipeModel.totalTime
         self.title = recipeModel.title ?? ""
-        self.recipeDescription = recipeModel.recipeDescription
+        self.recipeDescription = recipeModel.recipeDescription ?? ""
         self.author = recipeModel.author
-//        if let urlString = recipeModel.url {
-//            self.url = URL(string: urlString)
-//        }
-//        self.category = recipeModel.category
-//        self.nutrients = recipeModel.nutrients
-//        self.ratings = recipeModel.ratings
-//        self.siteName = recipeModel.siteName
-//        self.yields = recipeModel.yields ?? ""
+        if let urlString = recipeModel.url {
+            self.url = URL(string: urlString)
+        }
+        self.category = recipeModel.category
+        self.nutrients = recipeModel.nutrients
+        self.siteName = recipeModel.siteName
+        self.yields = recipeModel.yields ?? ""
     }
     
     static func emptyRecipe() -> Recipe {
-        return Recipe(instructions: [], ingredients: [], imageURL: URL(string: ""), cookTime: nil, cuisine: "", prepTime: nil, totalTime: nil, title: "", recipeDescription: "", author: "", url: URL(string: ""), category: "", nutrients: [:], ratings: 0.0, siteName: "", yields: "")
+        return Recipe(instructions: [], ingredients: [:], ingredientSectionNames: [""], imageURL: URL(string: ""), cookTime: nil, cuisine: "", prepTime: nil, totalTime: nil, title: "", recipeDescription: "", author: "", url: URL(string: ""), category: "", nutrients: [:], siteName: "", yields: "")
     }
     
     public var hasImage: Bool {
@@ -134,12 +139,12 @@ final class Recipe: Identifiable, Equatable {
         return !noImage
     }
     
-    public var canAddIngredient: Bool {
-        if let last = self.ingredients.last, !last.isEmpty {
+    public func canAddIngredient(to section: String) -> Bool {
+        if let ingredientList = ingredients[section], let last = ingredientList.last, !last.isEmpty {
             return true
         }
         
-        if ingredients.isEmpty {
+        if let ingredientList = ingredients[section], ingredientList.isEmpty {
             return true
         }
         
