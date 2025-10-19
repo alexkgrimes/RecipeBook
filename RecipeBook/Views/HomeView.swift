@@ -50,8 +50,8 @@ struct HomeView: View {
             }
             
             var completeIngredientsList = ""
-            for (_, ingredientsList) in recipe.ingredients {
-                let subList = ingredientsList.joined(separator: " ")
+            for ingredientSection in recipe.ingredientSections {
+                let subList = ingredientSection.ingredients.joined(separator: " ")
                 completeIngredientsList.append(subList)
             }
             if smartSearchMatcher.matches(completeIngredientsList) {
@@ -100,8 +100,8 @@ struct HomeView: View {
                 
             }
             .sheet(isPresented: $inputRecipe) {
-                RecipeEditorView(editorMode: .new, recipeViewModel: recipeViewModel, saveRecipe: { recipe in
-                    model.add(recipe: recipe)
+                RecipeEditorView(editorMode: .new, recipeViewModel: recipeViewModel, didSaveRecipe: { _ in
+                    model.loadData()
                 })
             }
             .sheet(isPresented: $editRecipeBook) {

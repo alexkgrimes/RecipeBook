@@ -43,35 +43,35 @@ class RecipeViewModel: ObservableObject {
         }
     }
     
-    public func addIngredientIfNeeded(to section: String) {
+    public func addIngredientIfNeeded(to section: Int) {
         if recipe.canAddIngredient(to: section) {
-            recipe.ingredients[section]?.append("")
+            recipe.ingredientSections[safe: section]?.ingredients.append("")
             objectWillChange.send()
         }
     }
     
-    func updateRecipe(recipe: Recipe) {
+    func addIngredientSection() {
+        recipe.ingredientSections.append(IngredientSection(sectionName: "Section Name", ingredients: []))
+        
+        objectWillChange.send()
+    }
+    
+    // TODO: this should probably return a recipe, success/failure
+    func updateRecipe() async  {
         Task {
             // This is updating a recipe that already exists
-            await WebService.addRecipe(newRecipe: recipe)
-            self.recipe = recipe
+            return await WebService.addRecipe(newRecipe: recipe)
         }
     }
     
-    func increaseYield() {
-        updateYieldNumber(increment: true)
-    }
-    
-    func decreaseYield() {
-        updateYieldNumber(increment: false)
-    }
-    
-    private func updateYieldNumber(increment: Bool) {
-        let updatedYields = recipe.yields.byOffsettingNumbersBy(increment ? 1 : -1)
-        print("\(updatedYields)")
-        recipe.yields = updatedYields
-        // TODO: actually increase the amounts as well :/
-        objectWillChange.send()
+    // TODO: this should probably return a recipe, success/failure
+    func addRecipe() async {
+        print("addRecipe")
+        for sectionIndex in recipe.ingredientSections.indices {
+            recipe.ingredientSections[sectionIndex].ingredients = recipe.ingredientSections[sectionIndex].ingredients.filter { !$0.isEmpty }
+        }
+        recipe.instructions = recipe.instructions.filter { !$0.isEmpty }
+        return await WebService.addRecipe(newRecipe: recipe)
     }
 }
 

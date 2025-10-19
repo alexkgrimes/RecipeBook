@@ -64,8 +64,9 @@ struct RecipeDetailView: View {
                 }
             }
             .sheet(isPresented: $showEditor) {
-                RecipeEditorView(editorMode: .update, recipeViewModel: recipeViewModel, saveRecipe: { recipe in
-                    recipeViewModel.updateRecipe(recipe: recipe)
+                let viewModel = RecipeViewModel(recipe: recipeViewModel.recipe.mutableCopy())
+                RecipeEditorView(editorMode: .update, recipeViewModel: viewModel, didSaveRecipe: { recipe in
+                    recipeViewModel.recipe = recipe
                 })
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -133,13 +134,15 @@ struct RecipeDetailView: View {
                 .bold()
                 .padding(.bottom, 8.0)
             
-            ForEach(recipeViewModel.recipe.ingredientSectionNames.indices, id: \.self) { sectionIndex in
-                let name = recipeViewModel.recipe.ingredientSectionNames[sectionIndex]
-                if !name.isEmpty {
-                    Text("\(name)")
+            ForEach(recipeViewModel.recipe.ingredientSections, id: \.self) { section in
+                if !section.sectionName.isEmpty {
+                    Text("\(section.sectionName.isEmpty)")
+                        .bold()
+                        .foregroundStyle(Color.accentColor)
+                        .padding(.top, 2.0)
                 }
-                ForEach(recipeViewModel.recipe.ingredients[name]!.indices, id: \.self) { index in
-                    Text("• \(recipeViewModel.recipe.ingredients[name]![index])")
+                ForEach(section.ingredients.indices, id: \.self) { index in
+                    Text("• \(section.ingredients[index])")
                     Spacer(minLength: 4.0)
                 }
             }
@@ -213,24 +216,7 @@ struct ServingsView: View {
     let yield: String
     
     var body: some View {
-        
-        HStack(alignment: .center, spacing: 12.0) {
-            Button {
-                recipeViewModel.decreaseYield()
-            } label: {
-                Image(systemName: "minus")
-            }
-            Text(yield)
-            Button {
-                recipeViewModel.increaseYield()
-            } label: {
-                Image(systemName: "plus")
-            }
-        }
-        .foregroundStyle(.secondary)
-        .padding(.all, 6.0)
-        .background(Capsule()
-            .stroke(lineWidth: 1.0)
-            .foregroundStyle(.secondary))
+        Text(yield)
+            .foregroundStyle(.secondary)
     }
 }

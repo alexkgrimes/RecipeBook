@@ -19,43 +19,49 @@ struct RecipeEditorView: View {
     @ObservedObject var recipeViewModel: RecipeViewModel
     
     let editorMode: RecipeEditorMode
-    var saveRecipe: ((Recipe) -> ())?
+    var didSaveRecipe: ((Recipe) -> ())?
     
-    init(editorMode: RecipeEditorMode, recipeViewModel: RecipeViewModel, saveRecipe: ((Recipe) -> ())? = nil) {
+    init(editorMode: RecipeEditorMode, recipeViewModel: RecipeViewModel, didSaveRecipe: ((Recipe) -> ())? = nil) {
         self.editorMode = editorMode
         self.recipeViewModel = recipeViewModel
-        self.saveRecipe = saveRecipe
+        self.didSaveRecipe = didSaveRecipe
     }
     
     var body: some View {
         NavigationStack {
-            manualEntryForm
-                .navigationTitle(editorMode == .new ? "New Recipe" : "Update Recipe")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "xmark")
-                        }
-                    }
-                    
-                    if editorMode == .update {
-                        ToolbarItem(placement: .topBarTrailing) {
+            ScrollViewReader { proxy in
+                manualEntryForm(proxy: proxy)
+                    .navigationTitle(editorMode == .new ? "New Recipe" : "Update Recipe")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
                             Button {
                                 dismiss()
                             } label: {
-                                Image(systemName: "checkmark")
+                                Image(systemName: "xmark")
+                            }
+                        }
+                        
+                        if editorMode == .update {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button {
+                                    Task {
+                                        await recipeViewModel.updateRecipe()
+                                        didSaveRecipe?(recipeViewModel.recipe)
+                                        dismiss()
+                                    }
+                                } label: {
+                                    Image(systemName: "checkmark")
+                                }
                             }
                         }
                     }
-                }
+            }
         }
     }
     
     @ViewBuilder
-    var manualEntryForm: some View {
+    func manualEntryForm(proxy: ScrollViewProxy) -> some View {
         Form {
             Section {
                 RecipeImage(recipeViewModel: recipeViewModel)
@@ -91,7 +97,7 @@ struct RecipeEditorView: View {
             }
             
             Section("Ingredients") {
-                ingredientsEditorView
+                ingredientsEditorView(proxy: proxy)
             }
             
             Section("Instructions") {
@@ -106,24 +112,25 @@ struct RecipeEditorView: View {
                 }
             }
             
-            Button {
-                for (label, _) in recipeViewModel.recipe.ingredients {
-                    recipeViewModel.recipe.ingredients[label] = recipeViewModel.recipe.ingredients[label]?.filter { !$0.isEmpty }
+            if editorMode == .new {
+                Button {
+                    Task {
+                        await recipeViewModel.addRecipe()
+                        didSaveRecipe?(recipeViewModel.recipe)
+                        dismiss()
+                    }
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("Save Recipe")
+                            .multilineTextAlignment(.center)
+                        Spacer()
+                    }
                 }
-                recipeViewModel.recipe.instructions = recipeViewModel.recipe.instructions.filter { !$0.isEmpty }
-                saveRecipe?(recipeViewModel.recipe)
-                dismiss()
-            } label: {
-                HStack {
-                    Spacer()
-                    Text("Save Recipe")
-                        .multilineTextAlignment(.center)
-                    Spacer()
-                }
+                .buttonStyle(.borderedProminent)
+                .frame(maxWidth: .infinity)
+                .listRowBackground(Color.clear)
             }
-            .buttonStyle(.borderedProminent)
-            .frame(maxWidth: .infinity)
-            .listRowBackground(Color.clear)
         }
     }
     
@@ -131,34 +138,56 @@ struct RecipeEditorView: View {
         return recipeViewModel.recipe.hasImage ? "Edit Image" : "Add Image"
     }
     
-    @ViewBuilder var ingredientsEditorView: some View {
-        ForEach(recipeViewModel.recipe.ingredientSectionNames.indices, id: \.self) { sectionIndex in
-            let name = recipeViewModel.recipe.ingredientSectionNames[sectionIndex]
-            if !name.isEmpty {
-                Text("\(name)")
+    @ViewBuilder func ingredientsEditorView(proxy: ScrollViewProxy) -> some View {
+        Button {
+            // TODO: scroll to new section
+            recipeViewModel.addIngredientSection()
+//            proxy.scrollTo(recipeViewModel.recipe.ingredientSectionNames.count - 1)
+        } label: {
+            Text("Add Section")
+                .foregroundStyle(Color.accentColor)
+                .listStyle(.plain)
+        }
+        ForEach(recipeViewModel.recipe.ingredientSections.indices, id: \.self) { sectionIndex in
+            let name = recipeViewModel.recipe.ingredientSections[sectionIndex].sectionName
+            if sectionIndex != 0 {
+                TextField("\(name)", text: $recipeViewModel.recipe.ingredientSections[sectionIndex].sectionName)
+                    .id(sectionIndex)
                     .listStyle(.plain)
+                    .textFieldStyle(.plain)
+                    .bold()
             }
             
-            if let ingredientsList = recipeViewModel.recipe.ingredients[name] {
-                ForEach(ingredientsList.indices, id: \.self) { index in
-                    TextField("Enter ingredient", text: self.binding(for: name)[index], axis: .vertical)
-                }
-                EmptyView()
+            ForEach(recipeViewModel.recipe.ingredientSections[sectionIndex].ingredients.indices, id: \.self) { index in
+                TextField("Enter ingredient", text: $recipeViewModel.recipe.ingredientSections[sectionIndex].ingredients[index], axis: .vertical)
             }
+            .onDelete { offsets in
+                for i in offsets {
+                    recipeViewModel.recipe.ingredientSections[sectionIndex].ingredients.remove(at: i)
+                }
+            }
+            // TODO: move ingredients between sections
+            .onMove { indexSet, destination in
+                recipeViewModel.recipe.ingredientSections[sectionIndex].ingredients.move(fromOffsets: indexSet, toOffset: destination)
+            }
+            
+            EmptyView()
+            
             
             Button {
-                recipeViewModel.addIngredientIfNeeded(to: name)
+                recipeViewModel.addIngredientIfNeeded(to: sectionIndex)
             } label: {
                 Text("Add Ingredient")
+                    .listStyle(.plain)
             }
         }
     }
     
-    private func binding(for key: String) -> Binding<[String]> {
-        return .init(
-            get: { self.recipeViewModel.recipe.ingredients[key, default: []] },
-            set: { self.recipeViewModel.recipe.ingredients[key] = $0 })
-    }
+//    private func binding(for key: Int) -> Binding<[String]> {
+//        return .init(
+//            get: { self.recipeViewModel.recipe.ing[key, default: []] },
+//            set: { self.recipeViewModel.recipe.ingredients[key] = $0 })
+//    }
 }
 
 extension View {

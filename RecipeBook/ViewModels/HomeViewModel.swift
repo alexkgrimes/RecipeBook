@@ -19,7 +19,7 @@ class HomeViewModel: ObservableObject {
         }
     }
  
-    private func loadData() {
+    func loadData() {
         Task {
             print("loadData()")
             self.recipes = await WebService.fetchRecipes()
@@ -32,14 +32,6 @@ class HomeViewModel: ObservableObject {
         // Read that value, and use it to trigger the recipe load
         // For now though, we only have one book and it doesn't matter
         currentBook = nil
-    }
-    
-    func add(recipe: Recipe) {
-        Task {
-            print("addRecipe")
-            await WebService.addRecipe(newRecipe: recipe)
-            loadData()
-        }
     }
     
     func delete(recipe: Recipe) {
