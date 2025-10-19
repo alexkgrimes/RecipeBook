@@ -136,7 +136,7 @@ struct RecipeDetailView: View {
             
             ForEach(recipeViewModel.recipe.ingredientSections, id: \.self) { section in
                 if !section.sectionName.isEmpty {
-                    Text("\(section.sectionName.isEmpty)")
+                    Text("\(section.sectionName)")
                         .bold()
                         .foregroundStyle(Color.accentColor)
                         .padding(.top, 2.0)

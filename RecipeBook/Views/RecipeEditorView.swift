@@ -141,53 +141,46 @@ struct RecipeEditorView: View {
     @ViewBuilder func ingredientsEditorView(proxy: ScrollViewProxy) -> some View {
         Button {
             // TODO: scroll to new section
-            recipeViewModel.addIngredientSection()
-//            proxy.scrollTo(recipeViewModel.recipe.ingredientSectionNames.count - 1)
+            recipeViewModel.addFlattenedIngredientSection()
+            proxy.scrollTo(recipeViewModel.flattenedIngredients.count - 1)
         } label: {
             Text("Add Section")
                 .foregroundStyle(Color.accentColor)
                 .listStyle(.plain)
         }
-        ForEach(recipeViewModel.recipe.ingredientSections.indices, id: \.self) { sectionIndex in
-            let name = recipeViewModel.recipe.ingredientSections[sectionIndex].sectionName
-            if sectionIndex != 0 {
-                TextField("\(name)", text: $recipeViewModel.recipe.ingredientSections[sectionIndex].sectionName)
-                    .id(sectionIndex)
+        ForEach(recipeViewModel.flattenedIngredients.indices, id: \.self) { index in
+            if index != 0 && recipeViewModel.flattenedIngredients[index].type == .title {
+                TextField("Enter section title", text: $recipeViewModel.flattenedIngredients[index].text)
+                    .id(index)
                     .listStyle(.plain)
                     .textFieldStyle(.plain)
                     .bold()
-            }
-            
-            ForEach(recipeViewModel.recipe.ingredientSections[sectionIndex].ingredients.indices, id: \.self) { index in
-                TextField("Enter ingredient", text: $recipeViewModel.recipe.ingredientSections[sectionIndex].ingredients[index], axis: .vertical)
-            }
-            .onDelete { offsets in
-                for i in offsets {
-                    recipeViewModel.recipe.ingredientSections[sectionIndex].ingredients.remove(at: i)
+            } else if recipeViewModel.flattenedIngredients[index].type == .ingredient {
+                TextField("Enter ingredient", text: $recipeViewModel.flattenedIngredients[index].text, axis: .vertical)
+                    .id(index)
+            } else if recipeViewModel.flattenedIngredients[index].type == .addIngredientButton {
+                Button {
+                    recipeViewModel.addFlattenedIngredientIfNeeded(at: index)
+                } label: {
+                    Text("Add Ingredient")
+                        .listStyle(.plain)
                 }
-            }
-            // TODO: move ingredients between sections
-            .onMove { indexSet, destination in
-                recipeViewModel.recipe.ingredientSections[sectionIndex].ingredients.move(fromOffsets: indexSet, toOffset: destination)
-            }
-            
-            EmptyView()
-            
-            
-            Button {
-                recipeViewModel.addIngredientIfNeeded(to: sectionIndex)
-            } label: {
-                Text("Add Ingredient")
-                    .listStyle(.plain)
+                .id(index)
+                .deleteDisabled(true)
+                .moveDisabled(true)
+
             }
         }
+        .onDelete { offsets in
+            for i in offsets {
+                recipeViewModel.flattenedIngredients.remove(at: i)
+            }
+        }
+        .onMove { indexSet, destination in
+            // TODO: when moving a section header, need to move the add ingredient button too
+            recipeViewModel.flattenedIngredients.move(fromOffsets: indexSet, toOffset: destination)
+        }
     }
-    
-//    private func binding(for key: Int) -> Binding<[String]> {
-//        return .init(
-//            get: { self.recipeViewModel.recipe.ing[key, default: []] },
-//            set: { self.recipeViewModel.recipe.ingredients[key] = $0 })
-//    }
 }
 
 extension View {

@@ -215,4 +215,16 @@ final class Recipe: Identifiable, Equatable, Copyable {
         
         return false
     }
+    
+    public var flattenedIngredients: [FlattenedIngredient] {
+        var flattened = [FlattenedIngredient]()
+        for section in self.ingredientSections {
+            flattened.append(.init(type: .title, text: section.sectionName))
+            for ingredient in section.ingredients {
+                flattened.append(.init(type: .ingredient, text: ingredient))
+            }
+            flattened.append(.init(type: .addIngredientButton, text: "Add Ingredient"))
+        }
+        return flattened
+    }
 }
