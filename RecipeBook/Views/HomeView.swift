@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @ObservedObject private var recipeViewModel = RecipeViewModel()
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     @State private var inputURL: Bool = false
     @State private var inputRecipe: Bool = false
@@ -78,17 +79,24 @@ struct HomeView: View {
     }
 
     var body: some View {
+        let columns = (horizontalSizeClass == .compact) ?
+                   [GridItem(.flexible())] : // One column for iPhone
+                   [GridItem(.flexible()), GridItem(.flexible())] // Two columns for iPad
+        
         NavigationStack {
-            List {
-                ForEach(filteredRecipes) { recipe in
-                    RecipeRowView(recipe: recipe)
-                }
-                .onDelete { (indexSet) in
-                    for index in indexSet {
-                        model.delete(recipe: filteredRecipes[index])
+            ScrollView {
+                LazyVGrid(columns: columns) {
+                    ForEach(filteredRecipes) { recipe in
+                        rowView(recipe: recipe)
+                    }
+                    .onDelete { (indexSet) in
+                        for index in indexSet {
+                            model.delete(recipe: filteredRecipes[index])
+                        }
                     }
                 }
             }
+            .background(Color(uiColor: UIColor.secondarySystemFill))
             .searchable(text: $searchText, placement: .navigationBarDrawer, prompt: "Search")
             .navigationTitle(model.currentBook?.name ?? "")
             .navigationBarTitleDisplayMode(.inline)
@@ -127,6 +135,14 @@ struct HomeView: View {
         .onAppear {
             model.dataInitialization()
         }
+    }
+    
+    @ViewBuilder func rowView(recipe: Recipe) -> some View {
+        RecipeRowView(recipe: recipe)
+            .padding()
+            .background(RoundedRectangle(cornerRadius: 10.0)
+                .fill(Color(uiColor: UIColor.secondarySystemGroupedBackground)))
+            .padding([.leading, .trailing])
     }
 }
 

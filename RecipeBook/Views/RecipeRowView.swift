@@ -42,6 +42,8 @@ struct RecipeRowView: View {
                     Text("\(recipeViewModel.recipe.cuisine)")
                         .font(.caption)
                 }
+                
+                Spacer()
             }
         }
     }
