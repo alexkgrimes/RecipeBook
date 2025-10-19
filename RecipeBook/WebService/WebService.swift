@@ -144,15 +144,15 @@ final class WebService {
     
     // MARK: - Scrape Recipe
     
-    static func parseRecipe(with url: String) async -> Recipe {
+    static func parseRecipe(with url: String) async -> (Recipe, Bool) {
         await withCheckedContinuation { continuation in
-            parseRecipe(with: url) { recipe in
-                continuation.resume(returning: recipe)
+            parseRecipe(with: url) { recipe, success in
+                continuation.resume(returning: (recipe, success))
             }
         }
     }
     
-    private static func parseRecipe(with url: String, completion: @escaping (Recipe) -> Void) {
+    private static func parseRecipe(with url: String, completion: @escaping (Recipe, Bool) -> Void) {
         // prepare json data
         let json: [String: Any] = ["url": url]
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
@@ -169,7 +169,7 @@ final class WebService {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 print(error?.localizedDescription ?? "No data")
-                completion(Recipe.emptyRecipe())
+                completion(Recipe.emptyRecipe(), false)
                 return
             }
             
@@ -178,10 +178,10 @@ final class WebService {
             do {
                 let scrapedRecipeModel = try decoder.decode(ScrapedRecipeModel.self, from: data)
                 let recipe = Recipe(from: scrapedRecipeModel)
-                completion(recipe)
+                completion(recipe, true)
             } catch {
                 print("Error in JSON parsing for scrape recipe.")
-                completion(Recipe.emptyRecipe())
+                completion(Recipe.emptyRecipe(), false)
             }
         }
 

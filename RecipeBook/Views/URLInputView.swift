@@ -8,17 +8,13 @@
 import Foundation
 import SwiftUI
 
-enum DismissalReason {
-    case cancel
-    case submit
-}
-
 struct URLInputView: View {
     @ObservedObject var recipeViewModel: RecipeViewModel
     @Environment(\.dismiss) var dismiss
     
     @State private var url = ""
-    @State private var dismissalReason: DismissalReason = .cancel
+    @State private var parseAlert: Bool = false
+    var submitCompletion: (() -> ())?
     
     var body: some View {
         NavigationStack {
@@ -39,21 +35,62 @@ struct URLInputView: View {
     @ViewBuilder
     var urlEntryForm: some View {
         Form {
-            TextField("Enter URL", text: $url)
-                .keyboardType(.URL)
-                .textContentType(.URL)
-            
-            Button {
-                print("Submit")
-                Task {
-                    recipeViewModel.recipe = await WebService.parseRecipe(with: url)
-                    dismiss()
+            Section {
+                TextField("Enter URL", text: $url)
+                    .keyboardType(.URL)
+                    .textContentType(.URL)
+                
+                Button {
+                    parseRecipe()
+                } label: {
+                    Text("Submit")
                 }
-            } label: {
-                Text("Submit")
             }
-        }.onAppear {
+
+            Section {
+                Button {
+                    dismiss() {
+                        submitCompletion?()
+                    }
+                } label: {
+                    Text("Manual Entry")
+                }
+                .buttonStyle(.borderedProminent)
+                .frame(maxWidth: .infinity)
+                .listRowBackground(Color.clear)
+            }
+        }
+        .onAppear {
             recipeViewModel.recipe = Recipe.emptyRecipe()
         }
+        .alert("Parse Failure", isPresented: $parseAlert) {
+            Button("Enter Manually") {
+                dismiss() {
+                    submitCompletion?()
+                }
+            }
+        } message: {
+            Text("Failed to parse recipe from URL.")
+        }
+    }
+    
+    private func parseRecipe() {
+        print("Submit")
+        Task {
+            let (recipe, success) = await WebService.parseRecipe(with: url)
+            recipeViewModel.recipe = recipe
+            guard success else {
+                parseAlert = true
+                return
+            }
+            dismiss() {
+                submitCompletion?()
+            }
+        }
+    }
+    
+    private func dismiss(completion: (() -> ())?) {
+        dismiss()
+        completion?()
     }
 }

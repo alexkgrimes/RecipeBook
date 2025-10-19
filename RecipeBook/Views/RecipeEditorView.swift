@@ -122,7 +122,7 @@ struct RecipeEditorView: View {
                 } label: {
                     HStack {
                         Spacer()
-                        Text("Save Recipe")
+                        Text("Add Recipe")
                             .multilineTextAlignment(.center)
                         Spacer()
                     }
@@ -142,7 +142,6 @@ struct RecipeEditorView: View {
         Button {
             // TODO: scroll to new section
             recipeViewModel.addFlattenedIngredientSection()
-            proxy.scrollTo(recipeViewModel.flattenedIngredients.count - 1)
         } label: {
             Text("Add Section")
                 .foregroundStyle(Color.accentColor)
@@ -151,7 +150,6 @@ struct RecipeEditorView: View {
         ForEach(recipeViewModel.flattenedIngredients.indices, id: \.self) { index in
             if index != 0 && recipeViewModel.flattenedIngredients[index].type == .title {
                 TextField("Enter section title", text: $recipeViewModel.flattenedIngredients[index].text)
-                    .id(index)
                     .listStyle(.plain)
                     .textFieldStyle(.plain)
                     .bold()
@@ -165,7 +163,6 @@ struct RecipeEditorView: View {
                     Text("Add Ingredient")
                         .listStyle(.plain)
                 }
-                .id(index)
                 .deleteDisabled(true)
                 .moveDisabled(true)
 
@@ -177,7 +174,15 @@ struct RecipeEditorView: View {
             }
         }
         .onMove { indexSet, destination in
-            // TODO: when moving a section header, need to move the add ingredient button too
+            if let fromIndex = indexSet.first {
+                // When moving a section header, need to move the add ingredient button too
+                if recipeViewModel.flattenedIngredients[fromIndex].type == .title
+                    && recipeViewModel.flattenedIngredients[safe: fromIndex - 1]?.type == .addIngredientButton {
+                    recipeViewModel.flattenedIngredients.move(fromOffsets: IndexSet([fromIndex - 1, fromIndex]), toOffset: destination)
+                    return
+                }
+            }
+            
             recipeViewModel.flattenedIngredients.move(fromOffsets: indexSet, toOffset: destination)
         }
     }

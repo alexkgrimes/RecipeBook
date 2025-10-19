@@ -225,6 +225,11 @@ final class Recipe: Identifiable, Equatable, Copyable {
             }
             flattened.append(.init(type: .addIngredientButton, text: "Add Ingredient"))
         }
+        
+        if flattened.isEmpty {
+            flattened.append(.init(type: .addIngredientButton, text: "Add Ingredient"))
+        }
+        
         return flattened
     }
 }

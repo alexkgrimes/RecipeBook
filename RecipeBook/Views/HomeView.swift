@@ -92,12 +92,11 @@ struct HomeView: View {
             .searchable(text: $searchText, placement: .navigationBarDrawer, prompt: "Search")
             .navigationTitle(model.currentBook?.name ?? "")
             .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $inputURL, onDismiss: {
-                inputRecipe = true
-            }) {
-                URLInputView(recipeViewModel: recipeViewModel)
-                    .presentationDetents([.fraction(0.3)])
-                
+            .sheet(isPresented: $inputURL) {
+                URLInputView(recipeViewModel: recipeViewModel) {
+                    inputRecipe = true
+                }
+                .presentationDetents([.medium])
             }
             .sheet(isPresented: $inputRecipe) {
                 RecipeEditorView(editorMode: .new, recipeViewModel: recipeViewModel, didSaveRecipe: { _ in
