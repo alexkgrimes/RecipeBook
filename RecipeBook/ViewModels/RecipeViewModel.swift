@@ -15,6 +15,7 @@ class RecipeViewModel: ObservableObject {
     @Published var recipe: Recipe {
         didSet {
             self.flattenedIngredients = recipe.ingredientSections.flattenedIngredients
+            self.flattenedInstructions = recipe.instructionSections.flattenedInstructions
         }
     }
     
@@ -25,9 +26,12 @@ class RecipeViewModel: ObservableObject {
     }
     
     @Published var flattenedIngredients: [FlattenedListItem] = []
+    @Published var flattenedInstructions: [FlattenedListItem] = []
     
     init(recipe: Recipe? = nil) {
         self.recipe = recipe ?? Recipe.emptyRecipe()
+        self.flattenedIngredients = recipe?.ingredientSections.flattenedIngredients ?? []
+        self.flattenedInstructions = recipe?.instructionSections.flattenedInstructions ?? []
     }
     
     private func setImage(from selection: PhotosPickerItem?) {
@@ -43,11 +47,20 @@ class RecipeViewModel: ObservableObject {
         }
     }
 
-    public func addStepIfNeeded() {
-        if recipe.canAddStep {
-            recipe.instructions.append("")
-            objectWillChange.send()
+    public func addFlattenedStepIfNeeded(at index: Int) {
+        if let item = flattenedInstructions[safe: index - 1], item.type == .listItem && !item.text.isEmpty {
+            flattenedInstructions.insert(.init(type: .listItem, text: ""), at: index)
         }
+        
+        if let item = flattenedInstructions[safe: index - 1], item.type == .title {
+            flattenedInstructions.insert(.init(type: .listItem, text: ""), at: index)
+        }
+        
+        if index == 0 {
+            flattenedInstructions.insert(.init(type: .listItem, text: ""), at: index)
+        }
+        objectWillChange.send()
+        print("cannot add instruction in this state")
     }
     
     func addFlattenedIngredientIfNeeded(at index: Int) {
@@ -62,12 +75,19 @@ class RecipeViewModel: ObservableObject {
         if index == 0 {
             flattenedIngredients.insert(.init(type: .listItem, text: ""), at: index)
         }
+        objectWillChange.send()
         print("cannot add ingredient in this state")
     }
     
     func addFlattenedIngredientSection() {
         flattenedIngredients.append(.init(type: .title, text: "New Section"))
         flattenedIngredients.append(.init(type: .addButton, text: "Add Ingredient"))
+        objectWillChange.send()
+    }
+    
+    func addFlattenedInstructionSection() {
+        flattenedInstructions.append(.init(type: .title, text: "New Section"))
+        flattenedInstructions.append(.init(type: .addButton, text: "Add Step"))
         objectWillChange.send()
     }
     
@@ -89,26 +109,16 @@ class RecipeViewModel: ObservableObject {
     }
     
     private func cleanUpRecipe() {
-        var ingredientSections = [TitledList]()
-        for flattenedIngredient in flattenedIngredients {
-            switch flattenedIngredient.type {
-            case .title:
-                ingredientSections.append(.init(sectionName: flattenedIngredient.text, listItems: []))
-            case .listItem:
-                if ingredientSections.isEmpty {
-                    ingredientSections.append(.init(sectionName: "", listItems: []))
-                }
-                ingredientSections.last?.listItems.append(flattenedIngredient.text)
-            case .addButton:
-                continue
-            }
-        }
-        recipe.ingredientSections = ingredientSections
+        recipe.ingredientSections = flattenedIngredients.sectionedList()
+        recipe.instructionSections = flattenedInstructions.sectionedList()
         
         for sectionIndex in recipe.ingredientSections.indices {
             recipe.ingredientSections[sectionIndex].listItems = recipe.ingredientSections[sectionIndex].listItems.filter { !$0.isEmpty }
         }
-        recipe.instructions = recipe.instructions.filter { !$0.isEmpty }
+        
+        for sectionIndex in recipe.instructionSections.indices {
+            recipe.instructionSections[sectionIndex].listItems = recipe.instructionSections[sectionIndex].listItems.filter { !$0.isEmpty }
+        }
     }
 }
 

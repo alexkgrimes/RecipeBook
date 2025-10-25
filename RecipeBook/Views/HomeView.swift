@@ -60,8 +60,12 @@ struct HomeView: View {
                 continue
             }
             
-            let instructionsList = recipe.instructions.joined(separator: " ")
-            if smartSearchMatcher.matches(instructionsList) {
+            var completeInstructionsList = ""
+            for instructionSection in recipe.instructionSections {
+                let subList = instructionSection.listItems.joined(separator: " ")
+                completeInstructionsList.append(subList)
+            }
+            if smartSearchMatcher.matches(completeInstructionsList) {
                 labeledRecipes.append(LabeledRecipe(recipe: recipe, priority: 4))
                 continue
             }

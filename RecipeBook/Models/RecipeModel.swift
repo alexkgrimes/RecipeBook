@@ -29,7 +29,7 @@ struct ScrapedRecipeModel: Decodable {
 struct RecipeModel: Codable {
     let id: String?
     let timestamp: String?
-    let instructions: [String]?
+    let instructionSections: [TitledList]?
     let ingredientSections: [TitledList]?
     let imageURL: URL?
     let imageData: String?
@@ -49,7 +49,7 @@ struct RecipeModel: Codable {
     init(from recipe: Recipe) {
         self.id = recipe.uuid.uuidString
         self.timestamp = recipe.timestamp.ISO8601Format()
-        self.instructions = recipe.instructions
+        self.instructionSections = recipe.instructionSections
         self.ingredientSections = recipe.ingredientSections
         self.imageURL = recipe.imageURL
         self.imageData = recipe.image?.base64EncodedString()

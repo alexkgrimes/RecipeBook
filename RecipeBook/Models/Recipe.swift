@@ -18,7 +18,7 @@ final class Recipe: Identifiable, Equatable, Copyable {
     
     var uuid: UUID
     var timestamp: Date = Date.now
-    var instructions: [String] = []
+    var instructionSections: [TitledList] = []
     var ingredientSections: [TitledList] = []
     var imageURL: URL?
     var image: Data?
@@ -38,7 +38,7 @@ final class Recipe: Identifiable, Equatable, Copyable {
     static func == (lhs: Recipe, rhs: Recipe) -> Bool {
         return lhs.uuid == rhs.uuid &&
             lhs.timestamp == rhs.timestamp &&
-            lhs.instructions == rhs.instructions &&
+            lhs.instructionSections == rhs.instructionSections &&
             lhs.ingredientSections == rhs.ingredientSections &&
             lhs.imageURL == rhs.imageURL &&
             lhs.image == rhs.image &&
@@ -56,10 +56,10 @@ final class Recipe: Identifiable, Equatable, Copyable {
             lhs.yields == rhs.yields
     }
     
-    init(uuid: UUID, instructions: [String], ingredientSections: [TitledList], imageURL: URL?, cookTime: Int?, cuisine: String, prepTime: Int?, totalTime: Int?, title: String, recipeDescription: String, author: String?, url: URL?, category: String?, nutrients: [String: String]?, siteName: String?, yields: String) {
+    init(uuid: UUID, instructionSections: [TitledList], ingredientSections: [TitledList], imageURL: URL?, cookTime: Int?, cuisine: String, prepTime: Int?, totalTime: Int?, title: String, recipeDescription: String, author: String?, url: URL?, category: String?, nutrients: [String: String]?, siteName: String?, yields: String) {
         self.uuid = uuid
         self.timestamp = .now
-        self.instructions = instructions
+        self.instructionSections = instructionSections
         self.ingredientSections = ingredientSections
         self.imageURL = imageURL
         self.cookTime = cookTime
@@ -82,9 +82,8 @@ final class Recipe: Identifiable, Equatable, Copyable {
         scrapedRecipeModel.instructions?.enumerateLines { (line, stop) -> () in
             instructions.append(line)
         }
-        
+        self.instructionSections = [TitledList(sectionName: "", listItems: instructions)]
         self.timestamp = .now
-        self.instructions = instructions
         if let ingredients = scrapedRecipeModel.ingredients {
             self.ingredientSections = [TitledList(sectionName: "", listItems: ingredients)]
         }
@@ -112,7 +111,7 @@ final class Recipe: Identifiable, Equatable, Copyable {
         if let timestamp = recipeModel.timestamp {
             self.timestamp =  ISO8601DateFormatter().date(from: timestamp) ?? Date.now
         }
-        self.instructions = recipeModel.instructions ?? []
+        self.instructionSections = recipeModel.instructionSections ?? []
         self.ingredientSections = recipeModel.ingredientSections ?? []
         self.imageURL = recipeModel.imageURL
         let base64EncodedString = recipeModel.imageData
@@ -136,15 +135,16 @@ final class Recipe: Identifiable, Equatable, Copyable {
     }
     
     static func emptyRecipe() -> Recipe {
-        return Recipe(uuid: UUID(), instructions: [], ingredientSections: [], imageURL: URL(string: ""), cookTime: nil, cuisine: "", prepTime: nil, totalTime: nil, title: "", recipeDescription: "", author: "", url: URL(string: ""), category: "", nutrients: [:], siteName: "", yields: "")
+        return Recipe(uuid: UUID(), instructionSections: [], ingredientSections: [], imageURL: URL(string: ""), cookTime: nil, cuisine: "", prepTime: nil, totalTime: nil, title: "", recipeDescription: "", author: "", url: URL(string: ""), category: "", nutrients: [:], siteName: "", yields: "")
     }
     
     public func mutableCopy() -> Recipe {
         let ingredientSections = self.ingredientSections.map { $0.mutableCopy() }
+        let instructionSections = self.instructionSections.map { $0.mutableCopy() }
         let nutrients = self.nutrients
         let url = self.url
         let imageURL = self.imageURL
-        return Recipe(uuid: self.uuid, instructions: instructions, ingredientSections: ingredientSections, imageURL: imageURL, cookTime: cookTime, cuisine: cuisine, prepTime: prepTime, totalTime: totalTime, title: title, recipeDescription: recipeDescription, author: author, url: url, category: category, nutrients: nutrients, siteName: siteName, yields: yields)
+        return Recipe(uuid: self.uuid, instructionSections: instructionSections, ingredientSections: ingredientSections, imageURL: imageURL, cookTime: cookTime, cuisine: cuisine, prepTime: prepTime, totalTime: totalTime, title: title, recipeDescription: recipeDescription, author: author, url: url, category: category, nutrients: nutrients, siteName: siteName, yields: yields)
     }
     
     public var hasImage: Bool {
@@ -165,12 +165,13 @@ final class Recipe: Identifiable, Equatable, Copyable {
         return false
     }
     
-    public var canAddStep: Bool {
-        if let last = self.instructions.last, !last.isEmpty {
+    public func canAddStep(to section: Int) -> Bool {
+        let instructionList = instructionSections[section].listItems
+        if let last = instructionList.last, !last.isEmpty {
             return true
         }
         
-        if instructions.isEmpty {
+        if instructionList.isEmpty {
             return true
         }
         

@@ -7,8 +7,8 @@
 
 import Foundation
 
-final class TitledList: Equatable, Codable, Identifiable, Hashable, Copyable {
-    var id: UUID = UUID()
+public final class TitledList: Equatable, Codable, Identifiable, Hashable, Copyable {
+    public var id: UUID = UUID()
     var sectionName: String = ""
     var listItems: [String] = []
     
@@ -17,7 +17,7 @@ final class TitledList: Equatable, Codable, Identifiable, Hashable, Copyable {
         self.listItems = listItems
     }
     
-    static func == (lhs: TitledList, rhs: TitledList) -> Bool {
+    public static func == (lhs: TitledList, rhs: TitledList) -> Bool {
         if lhs.id != rhs.id {
             return false
         }
@@ -35,7 +35,7 @@ final class TitledList: Equatable, Codable, Identifiable, Hashable, Copyable {
         return true
     }
 
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(sectionName)
         hasher.combine(listItems)
@@ -68,7 +68,6 @@ extension [TitledList] {
         for section in self {
             flattened.append(.init(type: .title, text: section.sectionName))
             for ingredient in section.listItems {
-                print("appending ingredient: \(ingredient)")
                 flattened.append(.init(type: .listItem, text: ingredient))
             }
             flattened.append(.init(type: .addButton, text: "Add Ingredient"))
@@ -79,5 +78,43 @@ extension [TitledList] {
         }
         
         return flattened
+    }
+    
+    public var flattenedInstructions: [FlattenedListItem] {
+        var flattened = [FlattenedListItem]()
+        for section in self {
+            flattened.append(.init(type: .title, text: section.sectionName))
+            for ingredient in section.listItems {
+                flattened.append(.init(type: .listItem, text: ingredient))
+            }
+            flattened.append(.init(type: .addButton, text: "Add Step"))
+        }
+        
+        if flattened.isEmpty {
+            flattened.append(.init(type: .addButton, text: "Add Step"))
+        }
+        
+        return flattened
+    }
+}
+
+extension [FlattenedListItem] {
+    public func sectionedList() -> [TitledList] {
+        var titledList = [TitledList]()
+        for flattenedItem in self {
+            switch flattenedItem.type {
+            case .title:
+                titledList.append(.init(sectionName: flattenedItem.text, listItems: []))
+            case .listItem:
+                if titledList.isEmpty {
+                    titledList.append(.init(sectionName: "", listItems: []))
+                }
+                titledList.last?.listItems.append(flattenedItem.text)
+            case .addButton:
+                continue
+            }
+        }
+        
+        return titledList
     }
 }

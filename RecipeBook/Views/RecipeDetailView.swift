@@ -159,14 +159,23 @@ struct RecipeDetailView: View {
                 .bold()
                 .padding(.bottom, 8.0)
             
-            ForEach(recipeViewModel.recipe.instructions.indices, id: \.self) { index in
-                HStack(alignment: .top, spacing: 8.0) {
-                    Text("\(index + 1)")
+            ForEach(recipeViewModel.recipe.instructionSections, id: \.self) { section in
+                if !section.sectionName.isEmpty {
+                    Text("\(section.sectionName)")
                         .font(.title3)
                         .bold()
                         .foregroundStyle(Color.accentColor)
-                    
-                    Text("\(recipeViewModel.recipe.instructions[index])")
+                        .padding(.top, 2.0)
+                }
+                ForEach(section.listItems.indices, id: \.self) { index in
+                    HStack(alignment: .top, spacing: 8.0) {
+                        Text("\(index + 1)")
+                            .font(.title3)
+                            .bold()
+                            .foregroundStyle(Color.accentColor)
+                        
+                        Text("\(section.listItems[index])")
+                    }
                 }
             }
             Spacer()

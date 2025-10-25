@@ -101,15 +101,7 @@ struct RecipeEditorView: View {
             }
             
             Section("Instructions") {
-                ForEach($recipeViewModel.recipe.instructions.indices, id: \.self) { index in
-                    TextField("Enter step", text: $recipeViewModel.recipe.instructions[index], axis: .vertical)
-                }
-                
-                Button {
-                    recipeViewModel.addStepIfNeeded()
-                } label: {
-                    Text("Add Step")
-                }
+                instructionEditorView()
             }
             
             if editorMode == .new {
@@ -136,6 +128,54 @@ struct RecipeEditorView: View {
     
     var imageButtonString: String {
         return recipeViewModel.recipe.hasImage ? "Edit Image" : "Add Image"
+    }
+    
+    @ViewBuilder func instructionEditorView() -> some View {
+        Button {
+            // TODO: scroll to new section
+            recipeViewModel.addFlattenedInstructionSection()
+        } label: {
+            Text("Add Section")
+                .foregroundStyle(Color.accentColor)
+                .listStyle(.plain)
+        }
+        ForEach(recipeViewModel.flattenedInstructions.indices, id: \.self) { index in
+            if index != 0 && recipeViewModel.flattenedInstructions[index].type == .title {
+                TextField("Enter section title", text: $recipeViewModel.flattenedInstructions[index].text)
+                    .listStyle(.plain)
+                    .textFieldStyle(.plain)
+                    .bold()
+            } else if recipeViewModel.flattenedInstructions[index].type == .listItem {
+                TextField("Enter step", text: $recipeViewModel.flattenedInstructions[index].text, axis: .vertical)
+                    .id(index)
+            } else if recipeViewModel.flattenedInstructions[index].type == .addButton {
+                Button {
+                    recipeViewModel.addFlattenedStepIfNeeded(at: index)
+                } label: {
+                    Text("Add Step")
+                        .listStyle(.plain)
+                }
+                .deleteDisabled(true)
+                .moveDisabled(true)
+            }
+        }
+        .onDelete { offsets in
+            for i in offsets {
+                recipeViewModel.flattenedInstructions.remove(at: i)
+            }
+        }
+        .onMove { indexSet, destination in
+            if let fromIndex = indexSet.first {
+                // When moving a section header, need to move the add ingredient button too
+                if recipeViewModel.flattenedInstructions[fromIndex].type == .title
+                    && recipeViewModel.flattenedInstructions[safe: fromIndex - 1]?.type == .addButton {
+                    recipeViewModel.flattenedInstructions.move(fromOffsets: IndexSet([fromIndex - 1, fromIndex]), toOffset: destination)
+                    return
+                }
+            }
+            
+            recipeViewModel.flattenedInstructions.move(fromOffsets: indexSet, toOffset: destination)
+        }
     }
     
     @ViewBuilder func ingredientsEditorView(proxy: ScrollViewProxy) -> some View {
