@@ -153,10 +153,10 @@ struct RecipeEditorView: View {
                     .listStyle(.plain)
                     .textFieldStyle(.plain)
                     .bold()
-            } else if recipeViewModel.flattenedIngredients[index].type == .ingredient {
+            } else if recipeViewModel.flattenedIngredients[index].type == .listItem {
                 TextField("Enter ingredient", text: $recipeViewModel.flattenedIngredients[index].text, axis: .vertical)
                     .id(index)
-            } else if recipeViewModel.flattenedIngredients[index].type == .addIngredientButton {
+            } else if recipeViewModel.flattenedIngredients[index].type == .addButton {
                 Button {
                     recipeViewModel.addFlattenedIngredientIfNeeded(at: index)
                 } label: {
@@ -177,7 +177,7 @@ struct RecipeEditorView: View {
             if let fromIndex = indexSet.first {
                 // When moving a section header, need to move the add ingredient button too
                 if recipeViewModel.flattenedIngredients[fromIndex].type == .title
-                    && recipeViewModel.flattenedIngredients[safe: fromIndex - 1]?.type == .addIngredientButton {
+                    && recipeViewModel.flattenedIngredients[safe: fromIndex - 1]?.type == .addButton {
                     recipeViewModel.flattenedIngredients.move(fromOffsets: IndexSet([fromIndex - 1, fromIndex]), toOffset: destination)
                     return
                 }

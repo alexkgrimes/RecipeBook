@@ -10,36 +10,24 @@ import Combine
 import SwiftUI
 import PhotosUI
 
-enum FlattenedIngredientType {
-    case title
-    case ingredient
-    case addIngredientButton
-}
-
-class FlattenedIngredient {
-    var type: FlattenedIngredientType
-    var text: String
-    
-    init(type: FlattenedIngredientType, text: String) {
-        self.type = type
-        self.text = text
-    }
-}
-
 @MainActor
 class RecipeViewModel: ObservableObject {
-    @Published var recipe: Recipe
+    @Published var recipe: Recipe {
+        didSet {
+            self.flattenedIngredients = recipe.ingredientSections.flattenedIngredients
+        }
+    }
+    
     @Published var imageSelection: PhotosPickerItem? = nil {
         didSet {
             setImage(from: imageSelection)
         }
     }
     
-    @Published var flattenedIngredients: [FlattenedIngredient]
+    @Published var flattenedIngredients: [FlattenedListItem] = []
     
     init(recipe: Recipe? = nil) {
         self.recipe = recipe ?? Recipe.emptyRecipe()
-        self.flattenedIngredients = recipe?.flattenedIngredients ?? []
     }
     
     private func setImage(from selection: PhotosPickerItem?) {
@@ -62,36 +50,24 @@ class RecipeViewModel: ObservableObject {
         }
     }
     
-    public func addIngredientIfNeeded(to section: Int) {
-        if recipe.canAddIngredient(to: section) {
-            recipe.ingredientSections[safe: section]?.ingredients.append("")
-            objectWillChange.send()
-        }
-    }
-    
     func addFlattenedIngredientIfNeeded(at index: Int) {
-        if let item = flattenedIngredients[safe: index - 1], item.type == .ingredient && !item.text.isEmpty {
-            flattenedIngredients.insert(.init(type: .ingredient, text: ""), at: index)
+        if let item = flattenedIngredients[safe: index - 1], item.type == .listItem && !item.text.isEmpty {
+            flattenedIngredients.insert(.init(type: .listItem, text: ""), at: index)
         }
         
         if let item = flattenedIngredients[safe: index - 1], item.type == .title {
-            flattenedIngredients.insert(.init(type: .ingredient, text: ""), at: index)
+            flattenedIngredients.insert(.init(type: .listItem, text: ""), at: index)
         }
         
         if index == 0 {
-            flattenedIngredients.insert(.init(type: .ingredient, text: ""), at: index)
+            flattenedIngredients.insert(.init(type: .listItem, text: ""), at: index)
         }
         print("cannot add ingredient in this state")
     }
     
-    func addIngredientSection() {
-        recipe.ingredientSections.append(IngredientSection(sectionName: "Section Name", ingredients: []))
-        objectWillChange.send()
-    }
-    
     func addFlattenedIngredientSection() {
         flattenedIngredients.append(.init(type: .title, text: "New Section"))
-        flattenedIngredients.append(.init(type: .addIngredientButton, text: "Add Ingredient"))
+        flattenedIngredients.append(.init(type: .addButton, text: "Add Ingredient"))
         objectWillChange.send()
     }
     
@@ -113,24 +89,24 @@ class RecipeViewModel: ObservableObject {
     }
     
     private func cleanUpRecipe() {
-        var ingredientSections = [IngredientSection]()
+        var ingredientSections = [TitledList]()
         for flattenedIngredient in flattenedIngredients {
             switch flattenedIngredient.type {
             case .title:
-                ingredientSections.append(.init(sectionName: flattenedIngredient.text, ingredients: []))
-            case .ingredient:
+                ingredientSections.append(.init(sectionName: flattenedIngredient.text, listItems: []))
+            case .listItem:
                 if ingredientSections.isEmpty {
-                    ingredientSections.append(.init(sectionName: "", ingredients: []))
+                    ingredientSections.append(.init(sectionName: "", listItems: []))
                 }
-                ingredientSections.last?.ingredients.append(flattenedIngredient.text)
-            case .addIngredientButton:
+                ingredientSections.last?.listItems.append(flattenedIngredient.text)
+            case .addButton:
                 continue
             }
         }
         recipe.ingredientSections = ingredientSections
         
         for sectionIndex in recipe.ingredientSections.indices {
-            recipe.ingredientSections[sectionIndex].ingredients = recipe.ingredientSections[sectionIndex].ingredients.filter { !$0.isEmpty }
+            recipe.ingredientSections[sectionIndex].listItems = recipe.ingredientSections[sectionIndex].listItems.filter { !$0.isEmpty }
         }
         recipe.instructions = recipe.instructions.filter { !$0.isEmpty }
     }

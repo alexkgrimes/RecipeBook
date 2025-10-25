@@ -26,6 +26,7 @@ struct RecipeRowView: View {
 
                 VStack(alignment: .leading) {
                     Text(recipeViewModel.recipe.title)
+                        .multilineTextAlignment(.leading)
                         .foregroundStyle(Color.accentColor)
                         .bold()
                     

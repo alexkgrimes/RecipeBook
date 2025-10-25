@@ -137,12 +137,13 @@ struct RecipeDetailView: View {
             ForEach(recipeViewModel.recipe.ingredientSections, id: \.self) { section in
                 if !section.sectionName.isEmpty {
                     Text("\(section.sectionName)")
+                        .font(.title3)
                         .bold()
                         .foregroundStyle(Color.accentColor)
                         .padding(.top, 2.0)
                 }
-                ForEach(section.ingredients.indices, id: \.self) { index in
-                    Text("• \(section.ingredients[index])")
+                ForEach(section.listItems.indices, id: \.self) { index in
+                    Text("• \(section.listItems[index])")
                     Spacer(minLength: 4.0)
                 }
             }

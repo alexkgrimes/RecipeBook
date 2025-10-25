@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5C75140E2CAA66BB00D9ACE0 /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C75140D2CAA66BB00D9ACE0 /* WebService.swift */; };
+		5CB36A242EAD691200490467 /* TitledList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB36A232EAD690E00490467 /* TitledList.swift */; };
 		5CB37C2F2CBB830400A85C11 /* URLInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB37C2E2CBB830400A85C11 /* URLInputView.swift */; };
 		5CB37C352CBC525B00A85C11 /* RecipeRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB37C342CBC525B00A85C11 /* RecipeRowView.swift */; };
 		5CB37C372CBCB50300A85C11 /* RecipeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB37C362CBCB50300A85C11 /* RecipeDetailView.swift */; };
@@ -55,6 +56,7 @@
 /* Begin PBXFileReference section */
 		5C2F9B252CFAA06D001E234D /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		5C75140D2CAA66BB00D9ACE0 /* WebService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
+		5CB36A232EAD690E00490467 /* TitledList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledList.swift; sourceTree = "<group>"; };
 		5CB37C2E2CBB830400A85C11 /* URLInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLInputView.swift; sourceTree = "<group>"; };
 		5CB37C342CBC525B00A85C11 /* RecipeRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRowView.swift; sourceTree = "<group>"; };
 		5CB37C362CBCB50300A85C11 /* RecipeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeDetailView.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 			children = (
 				5CC1E3232CA9ED9700A2561E /* RecipeModel.swift */,
 				5CC1E3262CA9EE8700A2561E /* Recipe.swift */,
+				5CB36A232EAD690E00490467 /* TitledList.swift */,
 				5CB37C432CD47E9400A85C11 /* RecipeBook.swift */,
 			);
 			path = Models;
@@ -398,6 +401,7 @@
 				5CB37C2F2CBB830400A85C11 /* URLInputView.swift in Sources */,
 				5CB7F6932CF2F388006FC01B /* RecipeBookEditor.swift in Sources */,
 				5CC1E3272CA9EE8700A2561E /* Recipe.swift in Sources */,
+				5CB36A242EAD691200490467 /* TitledList.swift in Sources */,
 				5CB37C3F2CCF440B00A85C11 /* SmartSearchMatcher.swift in Sources */,
 				5CB37C462CD7E5E900A85C11 /* RecipeLibraryView.swift in Sources */,
 				FA6979E32C7C3B2D007DD2A5 /* HomeView.swift in Sources */,

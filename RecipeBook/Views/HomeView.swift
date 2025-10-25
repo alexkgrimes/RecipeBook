@@ -52,7 +52,7 @@ struct HomeView: View {
             
             var completeIngredientsList = ""
             for ingredientSection in recipe.ingredientSections {
-                let subList = ingredientSection.ingredients.joined(separator: " ")
+                let subList = ingredientSection.listItems.joined(separator: " ")
                 completeIngredientsList.append(subList)
             }
             if smartSearchMatcher.matches(completeIngredientsList) {

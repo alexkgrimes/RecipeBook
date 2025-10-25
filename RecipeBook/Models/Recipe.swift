@@ -7,45 +7,6 @@
 
 import Foundation
 
-final class IngredientSection: Equatable, Codable, Identifiable, Hashable, Copyable {
-    var id: UUID = UUID()
-    var sectionName: String = ""
-    var ingredients: [String] = []
-    
-    init(sectionName: String, ingredients: [String]) {
-        self.sectionName = sectionName
-        self.ingredients = ingredients
-    }
-    
-    static func == (lhs: IngredientSection, rhs: IngredientSection) -> Bool {
-        if lhs.id != rhs.id {
-            return false
-        }
-        if lhs.sectionName != rhs.sectionName {
-            return false
-        }
-        if lhs.ingredients.count != rhs.ingredients.count {
-            return false
-        }
-        for (i, lhsIngredient) in lhs.ingredients.enumerated() {
-            if lhsIngredient != rhs.ingredients[i] {
-                return false
-            }
-        }
-        return true
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-        hasher.combine(sectionName)
-        hasher.combine(ingredients)
-    }
-    
-    func mutableCopy() -> IngredientSection {
-        return IngredientSection(sectionName: self.sectionName, ingredients: self.ingredients)
-    }
-}
-
 extension Collection {
     // Returns the element at the specified index if it is within bounds, otherwise nil.
     subscript(safe index: Index) -> Element? {
@@ -58,7 +19,7 @@ final class Recipe: Identifiable, Equatable, Copyable {
     var uuid: UUID
     var timestamp: Date = Date.now
     var instructions: [String] = []
-    var ingredientSections: [IngredientSection] = []
+    var ingredientSections: [TitledList] = []
     var imageURL: URL?
     var image: Data?
     var cookTime: Int?
@@ -95,7 +56,7 @@ final class Recipe: Identifiable, Equatable, Copyable {
             lhs.yields == rhs.yields
     }
     
-    init(uuid: UUID, instructions: [String], ingredientSections: [IngredientSection], imageURL: URL?, cookTime: Int?, cuisine: String, prepTime: Int?, totalTime: Int?, title: String, recipeDescription: String, author: String?, url: URL?, category: String?, nutrients: [String: String]?, siteName: String?, yields: String) {
+    init(uuid: UUID, instructions: [String], ingredientSections: [TitledList], imageURL: URL?, cookTime: Int?, cuisine: String, prepTime: Int?, totalTime: Int?, title: String, recipeDescription: String, author: String?, url: URL?, category: String?, nutrients: [String: String]?, siteName: String?, yields: String) {
         self.uuid = uuid
         self.timestamp = .now
         self.instructions = instructions
@@ -125,7 +86,7 @@ final class Recipe: Identifiable, Equatable, Copyable {
         self.timestamp = .now
         self.instructions = instructions
         if let ingredients = scrapedRecipeModel.ingredients {
-            self.ingredientSections = [IngredientSection(sectionName: "", ingredients: ingredients)]
+            self.ingredientSections = [TitledList(sectionName: "", listItems: ingredients)]
         }
         self.imageURL = scrapedRecipeModel.image
         self.cookTime = scrapedRecipeModel.cookTime ?? 0
@@ -192,7 +153,7 @@ final class Recipe: Identifiable, Equatable, Copyable {
     }
     
     public func canAddIngredient(to section: Int) -> Bool {
-        let ingredientList = ingredientSections[section].ingredients
+        let ingredientList = ingredientSections[section].listItems
         if let last = ingredientList.last, !last.isEmpty {
             return true
         }
@@ -214,22 +175,5 @@ final class Recipe: Identifiable, Equatable, Copyable {
         }
         
         return false
-    }
-    
-    public var flattenedIngredients: [FlattenedIngredient] {
-        var flattened = [FlattenedIngredient]()
-        for section in self.ingredientSections {
-            flattened.append(.init(type: .title, text: section.sectionName))
-            for ingredient in section.ingredients {
-                flattened.append(.init(type: .ingredient, text: ingredient))
-            }
-            flattened.append(.init(type: .addIngredientButton, text: "Add Ingredient"))
-        }
-        
-        if flattened.isEmpty {
-            flattened.append(.init(type: .addIngredientButton, text: "Add Ingredient"))
-        }
-        
-        return flattened
     }
 }

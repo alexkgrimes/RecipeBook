@@ -30,7 +30,7 @@ struct RecipeModel: Codable {
     let id: String?
     let timestamp: String?
     let instructions: [String]?
-    let ingredientSections: [IngredientSection]?
+    let ingredientSections: [TitledList]?
     let imageURL: URL?
     let imageData: String?
     let cookTime: Int?
