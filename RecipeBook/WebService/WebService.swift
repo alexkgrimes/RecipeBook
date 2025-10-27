@@ -31,7 +31,9 @@ final class WebService {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 print(error?.localizedDescription ?? "No data")
-                completion([])
+                
+                let recipes = PersistenceManager.loadRecipesFromLocalFile()
+                completion(recipes)
                 return
             }
             
@@ -47,9 +49,13 @@ final class WebService {
                 let recipeModels = try decoder.decode([RecipeModel].self, from: data)
                 let recipes = recipeModels.map { Recipe(from: $0) }
                 completion(recipes)
+                
+                PersistenceManager.cacheRecipesToLocalFile(recipeModels: recipeModels)
             } catch {
                 print("error: ", error)
-                completion([])
+                
+                let recipes = PersistenceManager.loadRecipesFromLocalFile()
+                completion(recipes)
             }
         }
 

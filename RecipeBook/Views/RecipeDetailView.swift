@@ -84,7 +84,7 @@ struct RecipeDetailView: View {
     @ViewBuilder var headerView: some View {
         HStack(alignment: .top, spacing: 8.0) {
             RecipeImage(recipeViewModel: recipeViewModel)
-                .frame(width: 120, height: 120)
+                .frame(width: UIScreen.main.bounds.width / 3, height: UIScreen.main.bounds.width / 3)
                 .clipShape(.rect(cornerRadius: 10))
 
             VStack(alignment: .leading) {
