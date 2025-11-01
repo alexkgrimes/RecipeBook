@@ -13,7 +13,7 @@ final class WebService {
     
     // MARK: - Fetch Recipe
     
-    static func fetchRecipes(for bookID: UUID? = nil) async -> [Recipe] {
+    static func fetchRecipes(for bookID: UUID? = nil) async -> [Recipe]? {
         await withCheckedContinuation() { continuation in
             fetchRecipes(for: bookID) { recipes in
                 continuation.resume(returning: recipes)
@@ -22,7 +22,7 @@ final class WebService {
     }
     
     // TODO: add bookID, for now it's all one book ID
-    private static func fetchRecipes(for bookID: UUID?, completion: @escaping ([Recipe]) -> Void) {
+    private static func fetchRecipes(for bookID: UUID?, completion: @escaping ([Recipe]?) -> Void) {
         // create get request
         let url = URL(string: endpointPrefix + "/recipes")!
         var request = URLRequest(url: url)
@@ -32,8 +32,12 @@ final class WebService {
             guard let data = data, error == nil else {
                 print(error?.localizedDescription ?? "No data")
                 
-                let recipes = PersistenceManager.loadRecipesFromLocalFile()
-                completion(recipes)
+                if let recipes = PersistenceManager.loadRecipesFromLocalFile() {
+                    completion(recipes)
+                    return
+                }
+                
+                completion(nil)
                 return
             }
             
@@ -54,8 +58,13 @@ final class WebService {
             } catch {
                 print("error: ", error)
                 
-                let recipes = PersistenceManager.loadRecipesFromLocalFile()
-                completion(recipes)
+                if let recipes = PersistenceManager.loadRecipesFromLocalFile() {
+                    completion(recipes)
+                    return
+                }
+
+                completion(nil)
+                return
             }
         }
 
@@ -64,15 +73,15 @@ final class WebService {
     
     // MARK: - Add Recipe
     
-    static func addRecipe(newRecipe: Recipe) async -> Void {
+    static func addRecipe(newRecipe: Recipe) async -> Bool {
         await withCheckedContinuation() { continuation in
-            addRecipe(newRecipe: newRecipe) {
-                continuation.resume()
+            addRecipe(newRecipe: newRecipe) { success in
+                continuation.resume(returning: success)
             }
         }
     }
     
-    private static func addRecipe(newRecipe: Recipe, completion: @escaping () -> Void) {
+    private static func addRecipe(newRecipe: Recipe, completion: @escaping (Bool) -> Void) {
         // prepare json data
         let recipeModel = RecipeModel(from: newRecipe)
         let jsonDict: [String: RecipeModel] = ["newRecipe": recipeModel]
@@ -87,12 +96,12 @@ final class WebService {
 //                print(jsonString)
 //            }
         } catch {
-            completion()
+            completion(false)
             print("Error encoding model to JSON: \(error)")
         }
         
         // create post request
-        let url = URL(string: endpointPrefix + "/update-recipe")!
+        let url = URL(string: WebService.endpointPrefix + "/update-recipe")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -103,10 +112,10 @@ final class WebService {
         let task = URLSession.shared.dataTask(with: request) { _, response, error in
             guard error == nil else {
                 print(error?.localizedDescription ?? "No data")
-                completion()
+                completion(false)
                 return
             }
-            completion()
+            completion(true)
         }
 
         task.resume()
@@ -114,21 +123,21 @@ final class WebService {
     
     // MARK: - Remove Recipe
     
-    static func removeRecipe(uuid: UUID) async -> Void {
+    static func removeRecipe(uuid: UUID) async -> Bool {
         await withCheckedContinuation() { continuation in
-            removeRecipe(uuid: uuid) {
-                continuation.resume()
+            removeRecipe(uuid: uuid) { success in
+                continuation.resume(returning: success)
             }
         }
     }
     
-    private static func removeRecipe(uuid: UUID, completion: @escaping () -> Void) {
+    private static func removeRecipe(uuid: UUID, completion: @escaping (Bool) -> Void) {
         // prepare json data
         let json: [String: Any] = ["uuid": uuid.uuidString]
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
         
         // create post request
-        let url = URL(string: endpointPrefix + "/remove-recipe")!
+        let url = URL(string: WebService.endpointPrefix + "/remove-recipe")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -139,10 +148,10 @@ final class WebService {
         let task = URLSession.shared.dataTask(with: request) { _, response, error in
             guard error == nil else {
                 print(error?.localizedDescription ?? "No data")
-                completion()
+                completion(false)
                 return
             }
-            completion()
+            completion(true)
         }
 
         task.resume()
@@ -164,7 +173,7 @@ final class WebService {
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
 
         // create post request
-        let url = URL(string: endpointPrefix + "/scrape-recipe")!
+        let url = URL(string: WebService.endpointPrefix + "/scrape-recipe")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

@@ -12,6 +12,7 @@ import PhotosUI
 
 @MainActor
 class RecipeViewModel: ObservableObject {
+    @Published var showErrorAlert: Bool = false
     @Published var recipe: Recipe {
         didSet {
             self.flattenedIngredients = recipe.ingredientSections.flattenedIngredients
@@ -91,21 +92,25 @@ class RecipeViewModel: ObservableObject {
         objectWillChange.send()
     }
     
-    // TODO: this should probably return a recipe, success/failure
-    func updateRecipe() async  {
-        Task {
-            // This is updating a recipe that already exists
-            cleanUpRecipe()
-            return await WebService.addRecipe(newRecipe: recipe)
+    func updateRecipe() async -> Bool {
+        // This is updating a recipe that already exists
+        cleanUpRecipe()
+        let success = await WebService.addRecipe(newRecipe: recipe)
+        if !success {
+            showErrorAlert = true
         }
+        return success
     }
     
-    // TODO: this should probably return a recipe, success/failure
-    func addRecipe() async {
+    func addRecipe() async -> Bool {
         print("addRecipe")
         
         cleanUpRecipe()
-        return await WebService.addRecipe(newRecipe: recipe)
+        let success = await WebService.addRecipe(newRecipe: recipe)
+        if !success {
+            showErrorAlert = true
+        }
+        return success
     }
     
     private func cleanUpRecipe() {

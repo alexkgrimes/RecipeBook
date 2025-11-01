@@ -46,9 +46,11 @@ struct RecipeEditorView: View {
                             ToolbarItem(placement: .topBarTrailing) {
                                 Button {
                                     Task {
-                                        await recipeViewModel.updateRecipe()
-                                        didSaveRecipe?(recipeViewModel.recipe)
-                                        dismiss()
+                                        let success = await recipeViewModel.updateRecipe()
+                                        if success {
+                                            didSaveRecipe?(recipeViewModel.recipe)
+                                            dismiss()
+                                        }
                                     }
                                 } label: {
                                     Image(systemName: "checkmark")
@@ -57,6 +59,11 @@ struct RecipeEditorView: View {
                         }
                     }
             }
+        }
+        .alert(isPresented: $recipeViewModel.showErrorAlert) {
+            Alert(title: Text("Network Error"),
+                  message: Text("Failed to save recipe."),
+                  dismissButton: .default(Text("OK")))
         }
     }
     
@@ -107,9 +114,11 @@ struct RecipeEditorView: View {
             if editorMode == .new {
                 Button {
                     Task {
-                        await recipeViewModel.addRecipe()
-                        didSaveRecipe?(recipeViewModel.recipe)
-                        dismiss()
+                        let success = await recipeViewModel.addRecipe()
+                        if success {
+                            didSaveRecipe?(recipeViewModel.recipe)
+                            dismiss()
+                        }
                     }
                 } label: {
                     HStack {

@@ -139,6 +139,11 @@ struct HomeView: View {
         .onAppear {
             model.dataInitialization()
         }
+        .alert(isPresented: $model.showErrorAlert) {
+            Alert(title: Text("Network Error"),
+                  message: Text("Failed to load recipes."),
+                  dismissButton: .default(Text("OK")))
+        }
     }
     
     @ViewBuilder func rowView(recipe: Recipe) -> some View {

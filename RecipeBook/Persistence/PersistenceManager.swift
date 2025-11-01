@@ -31,7 +31,7 @@ public class PersistenceManager {
         }
     }
     
-    static func loadRecipesFromLocalFile() -> [Recipe] {
+    static func loadRecipesFromLocalFile() -> [Recipe]? {
         do {
             let documentsDirectory = getDocumentsDirectory()
             let fileURL = documentsDirectory.appendingPathComponent(PersistenceManager.filename)
@@ -45,11 +45,11 @@ public class PersistenceManager {
                 return recipeModels.map { Recipe(from: $0) }
             } catch {
                 print("Error decoding JSON: \(error.localizedDescription)")
-                return []
+                return nil
             }
         } catch {
             print("Error reading from file: \(error.localizedDescription)")
-            return []
+            return nil
         }
     }
 }

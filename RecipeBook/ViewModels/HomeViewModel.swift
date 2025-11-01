@@ -11,6 +11,7 @@ import SwiftUI
 @MainActor
 class HomeViewModel: ObservableObject {
     @Published var recipes = [Recipe]()
+    @Published var showErrorAlert: Bool = false
     
     var currentBook: RecipeBook? = nil {
         didSet {
@@ -22,7 +23,13 @@ class HomeViewModel: ObservableObject {
     func loadData() {
         Task {
             print("loadData()")
-            self.recipes = await WebService.fetchRecipes()
+            let recipes = await WebService.fetchRecipes()
+            guard let recipes else {
+                self.recipes = []
+                showErrorAlert = true
+                return
+            }
+            self.recipes = recipes
         }
     }
     
