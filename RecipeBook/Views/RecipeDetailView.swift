@@ -13,13 +13,10 @@ struct RecipeDetailView: View {
     @Environment(\.openURL) var openURL
     @State var showEditor: Bool = false
     @State var cookModeOn: Bool = false
+    @Binding var viewMode: RecipeViewMode
     
     @State private var orientation: Orientation = .portrait
     @State private var screenSize: CGSize = .zero
-    
-    init(recipeViewModel: RecipeViewModel) {
-        self.recipeViewModel = recipeViewModel
-    }
     
     var body: some View {
         
@@ -56,18 +53,12 @@ struct RecipeDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        showEditor = true
+                        viewMode = .edit
                     } label: {
                         Image(systemName: "pencil")
                             .foregroundColor(.accentColor)
                     }
                 }
-            }
-            .sheet(isPresented: $showEditor) {
-                let viewModel = RecipeViewModel(recipe: recipeViewModel.recipe.mutableCopy())
-                RecipeEditorView(editorMode: .update, recipeViewModel: viewModel, didSaveRecipe: { recipe in
-                    recipeViewModel.recipe = recipe
-                })
             }
             .navigationBarTitleDisplayMode(.inline)
             .onChange(of: cookModeOn) {

@@ -17,7 +17,7 @@ struct RecipeRowView: View {
     
     var body: some View {
         NavigationLink {
-            RecipeDetailView(recipeViewModel: recipeViewModel)
+            RecipeContainerView(recipeViewModel: recipeViewModel)
         } label: {
             HStack(alignment: .top) {
                 RecipeImage(recipeViewModel: recipeViewModel)

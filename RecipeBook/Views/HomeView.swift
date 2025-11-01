@@ -113,7 +113,7 @@ struct HomeView: View {
             .sheet(isPresented: $inputRecipe) {
                 RecipeEditorView(editorMode: .new, recipeViewModel: recipeViewModel, didSaveRecipe: { _ in
                     model.loadData()
-                })
+                }, viewMode: .constant(.edit))
             }
             .sheet(isPresented: $editRecipeBook) {
                 RecipeLibraryView(currentBook: $model.currentBook)

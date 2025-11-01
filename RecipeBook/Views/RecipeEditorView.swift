@@ -17,14 +17,16 @@ enum RecipeEditorMode {
 struct RecipeEditorView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var recipeViewModel: RecipeViewModel
+    @Binding var viewMode: RecipeViewMode
     
     let editorMode: RecipeEditorMode
     var didSaveRecipe: ((Recipe) -> ())?
     
-    init(editorMode: RecipeEditorMode, recipeViewModel: RecipeViewModel, didSaveRecipe: ((Recipe) -> ())? = nil) {
+    init(editorMode: RecipeEditorMode, recipeViewModel: RecipeViewModel, didSaveRecipe: ((Recipe) -> ())? = nil, viewMode: Binding<RecipeViewMode>) {
         self.editorMode = editorMode
         self.recipeViewModel = recipeViewModel
         self.didSaveRecipe = didSaveRecipe
+        _viewMode = viewMode
     }
     
     var body: some View {
@@ -36,7 +38,7 @@ struct RecipeEditorView: View {
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) {
                             Button {
-                                dismiss()
+                                dismissView()
                             } label: {
                                 Image(systemName: "xmark")
                             }
@@ -49,7 +51,7 @@ struct RecipeEditorView: View {
                                         let success = await recipeViewModel.updateRecipe()
                                         if success {
                                             didSaveRecipe?(recipeViewModel.recipe)
-                                            dismiss()
+                                            dismissView()
                                         }
                                     }
                                 } label: {
@@ -62,8 +64,16 @@ struct RecipeEditorView: View {
         }
         .alert(isPresented: $recipeViewModel.showErrorAlert) {
             Alert(title: Text("Network Error"),
-                  message: Text("Failed to save recipe."),
+                  message: Text("Failed to save recipes."),
                   dismissButton: .default(Text("OK")))
+        }
+    }
+    
+    func dismissView() {
+        if editorMode == .update {
+            viewMode = .view
+        } else {
+            dismiss()
         }
     }
     
@@ -117,7 +127,7 @@ struct RecipeEditorView: View {
                         let success = await recipeViewModel.addRecipe()
                         if success {
                             didSaveRecipe?(recipeViewModel.recipe)
-                            dismiss()
+                            dismissView()
                         }
                     }
                 } label: {
