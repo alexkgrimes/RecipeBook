@@ -15,38 +15,13 @@ struct RecipeDetailView: View {
     @State var cookModeOn: Bool = false
     @Binding var viewMode: RecipeViewMode
     
-    @State private var orientation: Orientation = .portrait
-    @State private var screenSize: CGSize = .zero
-    
     var body: some View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
-                if orientation == .portrait {
-                    VStack(alignment: .leading) {
-                        headerView
-                        ingredientsView
-                        instructionsView
-                        notesView
-                    }
-                    .padding(.all)
-                } else {
-                    VStack(alignment: .leading) {
-                        headerView
-                        
-                        HStack(alignment: .top) {
-                            ingredientsView
-                            Rectangle()
-                                .frame(maxWidth: 1.0, maxHeight: .infinity)
-                                .foregroundStyle(.tertiary)
-                                .padding([.leading, .trailing], 16.0)
-
-                            instructionsView
-                            Spacer()
-                        }
-                        notesView
-                    }
-                    .padding(.all)
-                }
+                RecipeContentView(headerView: { headerView },
+                                  ingredientsView: { ingredientsView },
+                                  instructionsView: { instructionsView },
+                                  notesView: { notesView })
             }
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -66,7 +41,6 @@ struct RecipeDetailView: View {
                 cookModeOn = false
             }
         }
-        .getSize(size: $screenSize, orientation: $orientation)
         .environmentObject(recipeViewModel)
     }
     
