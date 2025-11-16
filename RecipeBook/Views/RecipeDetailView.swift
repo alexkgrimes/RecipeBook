@@ -170,24 +170,28 @@ struct TimeView: View {
     
     var body: some View {
         Button {
-            showAllTimes = true
+            if hasOtherTimes { showAllTimes = true }
         } label: {
             HStack(alignment: .center, spacing: 8.0) {
-                Image(systemName: "clock")
-                Text("\(totalTime) mins")
+                if let formatString = totalTime.timeString() {
+                    Image(systemName: "clock")
+                    Text("Total time: \(formatString)")
+                }
             }
             .foregroundStyle(hasOtherTimes ? Color.accentColor : .secondary)
         }
         .popover(isPresented: $showAllTimes) {
             VStack {
-                Text("Total time: \(totalTime) mins")
-                
-                if let prepTime = prepTime {
-                    Text("Prep time: \(prepTime) mins")
+                if let formatString = totalTime.timeString() {
+                    Text("Total time: \(formatString)")
                 }
                 
-                if let cookTime = cookTime {
-                    Text("Cook time: \(cookTime) mins")
+                if let prepTime = prepTime, let formatString = prepTime.timeString() {
+                    Text("Prep time: \(formatString)")
+                }
+                
+                if let cookTime = cookTime, let formatString = cookTime.timeString() {
+                    Text("Cook time: \(formatString)")
                 }
             }
             .padding()
@@ -203,5 +207,19 @@ struct ServingsView: View {
     var body: some View {
         Text(yield)
             .foregroundStyle(.secondary)
+    }
+}
+
+extension Int {
+    func timeString() -> String? {
+        let hrs = self / 60
+        let mins = self % 60
+        if hrs > 0 && mins > 0 {
+            return "\(hrs) hrs \(mins) mins"
+        } else if mins > 0 {
+            return "\(mins) mins"
+        } else {
+            return nil
+        }
     }
 }

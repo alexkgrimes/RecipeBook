@@ -17,6 +17,13 @@ class RecipeViewModel: ObservableObject {
         didSet {
             self.flattenedIngredients = recipe.ingredientSections.flattenedIngredients
             self.flattenedInstructions = recipe.instructionSections.flattenedInstructions
+            
+            self.cookTimeHrs = (recipe.cookTime ?? 0) / 60
+            self.cookTimeMins = (recipe.cookTime ?? 0) % 60
+            self.prepTimeHrs = (recipe.prepTime ?? 0) / 60
+            self.prepTimeMins = (recipe.prepTime ?? 0) % 60
+            self.totalTimeHrs = (recipe.totalTime ?? 0) / 60
+            self.totalTimeMins = (recipe.totalTime ?? 0) % 60
         }
     }
     
@@ -29,10 +36,24 @@ class RecipeViewModel: ObservableObject {
     @Published var flattenedIngredients: [FlattenedListItem] = []
     @Published var flattenedInstructions: [FlattenedListItem] = []
     
+    @Published var cookTimeHrs: Int?
+    @Published var cookTimeMins: Int?
+    @Published var prepTimeHrs: Int?
+    @Published var prepTimeMins: Int?
+    @Published var totalTimeHrs: Int?
+    @Published var totalTimeMins: Int?
+    
     init(recipe: Recipe? = nil) {
         self.recipe = recipe ?? Recipe.emptyRecipe()
         self.flattenedIngredients = recipe?.ingredientSections.flattenedIngredients ?? []
         self.flattenedInstructions = recipe?.instructionSections.flattenedInstructions ?? []
+        
+        self.cookTimeHrs = (recipe?.cookTime ?? 0) / 60
+        self.cookTimeMins = (recipe?.cookTime ?? 0) % 60
+        self.prepTimeHrs = (recipe?.prepTime ?? 0) / 60
+        self.prepTimeMins = (recipe?.prepTime ?? 0) % 60
+        self.totalTimeHrs = (recipe?.totalTime ?? 0) / 60
+        self.totalTimeMins = (recipe?.totalTime ?? 0) % 60
     }
     
     private func setImage(from selection: PhotosPickerItem?) {
@@ -116,6 +137,10 @@ class RecipeViewModel: ObservableObject {
     private func cleanUpRecipe() {
         recipe.ingredientSections = flattenedIngredients.sectionedList()
         recipe.instructionSections = flattenedInstructions.sectionedList()
+        
+        recipe.prepTime = (prepTimeHrs ?? 0) * 60 + (prepTimeMins ?? 0)
+        recipe.cookTime = (cookTimeHrs ?? 0) * 60 + (cookTimeMins ?? 0)
+        recipe.totalTime = (totalTimeHrs ?? 0) * 60 + (totalTimeMins ?? 0)
         
         for sectionIndex in recipe.ingredientSections.indices {
             recipe.ingredientSections[sectionIndex].listItems = recipe.ingredientSections[sectionIndex].listItems.filter { !$0.isEmpty }

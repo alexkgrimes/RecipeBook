@@ -30,13 +30,13 @@ struct RecipeRowView: View {
                         .foregroundStyle(Color.accentColor)
                         .bold()
                     
-                    if let cookTime = recipeViewModel.recipe.cookTime {
-                        Text("Cook time: \(cookTime) mins")
+                    if let cookTime = recipeViewModel.recipe.cookTime, let cookTimeString = cookTime.timeString() {
+                        Text("Cook time: \(cookTimeString)")
                             .font(.caption)
                     }
                     
-                    if let totalTime = recipeViewModel.recipe.totalTime {
-                        Text("Total time: \(totalTime) mins")
+                    if let totalTime = recipeViewModel.recipe.totalTime, let totalTimeString = totalTime.timeString() {
+                        Text("Total time: \(totalTimeString)")
                             .font(.caption)
                     }
                     
