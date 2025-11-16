@@ -45,6 +45,7 @@ struct RecipeModel: Codable {
     let nutrients: [String: String]?
     let siteName: String?
     let yields: String?
+    let notes: String?
     
     init(from recipe: Recipe) {
         self.id = recipe.uuid.uuidString
@@ -65,5 +66,6 @@ struct RecipeModel: Codable {
         self.nutrients = recipe.nutrients
         self.siteName = recipe.siteName
         self.yields = recipe.yields
+        self.notes = recipe.notes
     }
 }

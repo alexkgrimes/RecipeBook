@@ -19,7 +19,6 @@ struct RecipeDetailView: View {
     @State private var screenSize: CGSize = .zero
     
     var body: some View {
-        
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 if orientation == .portrait {
@@ -27,25 +26,24 @@ struct RecipeDetailView: View {
                         headerView
                         ingredientsView
                         instructionsView
+                        notesView
                     }
                     .padding(.all)
                 } else {
-                    
                     VStack(alignment: .leading) {
                         headerView
                         
                         HStack(alignment: .top) {
                             ingredientsView
-
                             Rectangle()
                                 .frame(maxWidth: 1.0, maxHeight: .infinity)
                                 .foregroundStyle(.tertiary)
                                 .padding([.leading, .trailing], 16.0)
 
                             instructionsView
-                            
                             Spacer()
                         }
+                        notesView
                     }
                     .padding(.all)
                 }
@@ -74,14 +72,15 @@ struct RecipeDetailView: View {
     
     @ViewBuilder var headerView: some View {
         HStack(alignment: .top, spacing: 8.0) {
+            let imageSize = min(UIScreen.main.bounds.width / 3, UIScreen.main.bounds.height / 3)
             RecipeImage(recipeViewModel: recipeViewModel)
-                .frame(width: UIScreen.main.bounds.width / 3, height: UIScreen.main.bounds.width / 3)
+                .frame(width: imageSize, height: imageSize)
                 .clipShape(.rect(cornerRadius: 10))
 
             VStack(alignment: .leading) {
                 Text(recipeViewModel.recipe.title)
                     .foregroundStyle(.primary)
-                    .font(.title)
+                    .font(.title2)
                     .bold()
                 if let url = recipeViewModel.recipe.url {
                     Button {
@@ -91,13 +90,12 @@ struct RecipeDetailView: View {
                             .foregroundStyle(Color.accentColor)
                     }
                 }
+                ServingsView(yield: recipeViewModel.recipe.yields)
             }
         }
         Spacer(minLength: 16.0)
         
         HStack(alignment: .center, spacing: 32.0) {
-            ServingsView(yield: recipeViewModel.recipe.yields)
-            
             if let totalTime = recipeViewModel.recipe.totalTime {
                 TimeView(totalTime: totalTime, prepTime: recipeViewModel.recipe.prepTime, cookTime: recipeViewModel.recipe.cookTime)
             }
@@ -170,6 +168,18 @@ struct RecipeDetailView: View {
                 }
             }
             Spacer()
+        }
+    }
+        
+    @ViewBuilder var notesView: some View {
+        if !recipeViewModel.recipe.notes.isEmpty {
+            VStack(alignment: .leading) {
+                Text("Notes")
+                    .font(.title2)
+                    .bold()
+                    .padding(.bottom, 8.0)
+                Text("\(recipeViewModel.recipe.notes)")
+            }
         }
     }
 }

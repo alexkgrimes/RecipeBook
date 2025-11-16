@@ -16,6 +16,7 @@ enum RecipeEditorMode {
 
 struct RecipeEditorView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @ObservedObject var recipeViewModel: RecipeViewModel
     @Binding var viewMode: RecipeViewMode
     
@@ -31,32 +32,30 @@ struct RecipeEditorView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollViewReader { proxy in
-                manualEntryForm(proxy: proxy)
-                    .navigationTitle(editorMode == .new ? "New Recipe" : "Update Recipe")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button {
-                                dismissView()
-                            } label: {
-                                Image(systemName: "xmark")
-                            }
+            manualEntryForm()
+                .navigationTitle(editorMode == .new ? "New Recipe" : "Update Recipe")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            dismissView()
+                        } label: {
+                            Image(systemName: "xmark")
                         }
-                        
-                        if editorMode == .update {
-                            ToolbarItem(placement: .topBarTrailing) {
-                                Button {
-                                    Task {
-                                        let success = await recipeViewModel.updateRecipe()
-                                        if success {
-                                            didSaveRecipe?(recipeViewModel.recipe)
-                                            dismissView()
-                                        }
+                    }
+                    
+                    if editorMode == .update {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button {
+                                Task {
+                                    let success = await recipeViewModel.updateRecipe()
+                                    if success {
+                                        didSaveRecipe?(recipeViewModel.recipe)
+                                        dismissView()
                                     }
-                                } label: {
-                                    Image(systemName: "checkmark")
                                 }
+                            } label: {
+                                Image(systemName: "checkmark")
                             }
                         }
                     }
@@ -78,47 +77,17 @@ struct RecipeEditorView: View {
     }
     
     @ViewBuilder
-    func manualEntryForm(proxy: ScrollViewProxy) -> some View {
-        Form {
-            Section {
-                RecipeImage(recipeViewModel: recipeViewModel)
-                    .listRowInsets(EdgeInsets())
-                PhotosPicker(imageButtonString, selection: $recipeViewModel.imageSelection, matching: .images)
-            }
-        
-            Section("Title") {
-                TextField("Title", text: $recipeViewModel.recipe.title)
-            }
-            
-            Section("Description") {
-                TextField("Description", text: $recipeViewModel.recipe.recipeDescription, axis: .vertical)
-            }
-            
-            Section("Yields") {
-                TextField("Servings", text: $recipeViewModel.recipe.yields)
-            }
-            
-            Section("Prep Time") {
-                TextField("", value: $recipeViewModel.recipe.prepTime, format: .number, prompt: Text("Prep Time (mins)"))
-                    .keyboardType(UIKeyboardType.decimalPad)
-            }
-            
-            Section("Cook Time") {
-                TextField("", value: $recipeViewModel.recipe.cookTime, format: .number, prompt: Text("Cook Time (mins)"))
-                    .keyboardType(UIKeyboardType.decimalPad)
-            }
-            
-            Section("Total Time") {
-                TextField("", value: $recipeViewModel.recipe.totalTime, format: .number, prompt: Text("Total Time (mins)"))
-                    .keyboardType(UIKeyboardType.decimalPad)
-            }
-            
+    func manualEntryForm() -> some View {
+        List {
+            headerView()
             Section("Ingredients") {
-                ingredientsEditorView(proxy: proxy)
+                ingredientsEditorView()
             }
-            
             Section("Instructions") {
                 instructionEditorView()
+            }
+            Section("Notes") {
+                TextField("Add notes", text: $recipeViewModel.recipe.notes, axis: .vertical)
             }
             
             if editorMode == .new {
@@ -143,10 +112,65 @@ struct RecipeEditorView: View {
                 .listRowBackground(Color.clear)
             }
         }
+        .listRowSeparator(.hidden)
     }
     
     var imageButtonString: String {
         return recipeViewModel.recipe.hasImage ? "Edit Image" : "Add Image"
+    }
+    
+    @ViewBuilder func headerView() -> some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading) {
+                let imageSize = min(UIScreen.main.bounds.width / 3, UIScreen.main.bounds.height / 3)
+                RecipeImage(recipeViewModel: recipeViewModel)
+                    .frame(width: imageSize, height: imageSize)
+                    .clipShape(.rect(cornerRadius: 12))
+                PhotosPicker(imageButtonString, selection: $recipeViewModel.imageSelection, matching: .images)
+            }
+        
+            VStack {
+                TextField("Title", text: $recipeViewModel.recipe.title, axis: .vertical)
+                    .font(.title2)
+                    .bold()
+                    .customTextFieldStyle()
+                
+                TextField("Servings", text: $recipeViewModel.recipe.yields)
+                    .customTextFieldStyle()
+            }
+        }
+        .customListRowModifier()
+        
+        HStack {
+            Text("Prep Time:")
+            TextField("", value: $recipeViewModel.recipe.prepTime, format: .number, prompt: Text("Prep Time (mins)"))
+                .customTextFieldStyle()
+                .keyboardType(UIKeyboardType.decimalPad)
+        }
+        .padding(.bottom)
+        .customListRowModifier()
+       
+        HStack {
+            Text("Cook Time:")
+            TextField("", value: $recipeViewModel.recipe.cookTime, format: .number, prompt: Text("Cook Time (mins)"))
+                .customTextFieldStyle()
+                .keyboardType(UIKeyboardType.decimalPad)
+        }
+        .padding(.bottom)
+        .customListRowModifier()
+        
+        HStack {
+            Text("Total Time: ")
+            TextField("", value: $recipeViewModel.recipe.totalTime, format: .number, prompt: Text("Total Time (mins)"))
+                .customTextFieldStyle()
+                .keyboardType(UIKeyboardType.decimalPad)
+        }
+        .padding(.bottom)
+        .customListRowModifier()
+        
+        TextField("Description", text: $recipeViewModel.recipe.recipeDescription, axis: .vertical)
+            .customTextFieldStyle()
+            .customListRowModifier()
     }
     
     @ViewBuilder func instructionEditorView() -> some View {
@@ -197,7 +221,7 @@ struct RecipeEditorView: View {
         }
     }
     
-    @ViewBuilder func ingredientsEditorView(proxy: ScrollViewProxy) -> some View {
+    @ViewBuilder func ingredientsEditorView() -> some View {
         Button {
             // TODO: scroll to new section
             recipeViewModel.addFlattenedIngredientSection()

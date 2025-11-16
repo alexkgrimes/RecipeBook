@@ -22,15 +22,24 @@ struct RecipeContainerView: View {
     }
     
     var body: some View {
-        switch viewMode {
-        case .view:
-            RecipeDetailView(recipeViewModel: recipeViewModel, viewMode: $viewMode)
-                .transition(.opacity)
-        case .edit:
-            RecipeEditorView(editorMode: .update,
-                             recipeViewModel: RecipeViewModel(recipe: recipeViewModel.recipe.mutableCopy()), viewMode: $viewMode)
-                .navigationBarBackButtonHidden()
-                .transition(.opacity)
+        ZStack {
+            switch viewMode {
+            case .view:
+                RecipeDetailView(recipeViewModel: recipeViewModel, viewMode: $viewMode)
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: viewMode)
+            case .edit:
+                RecipeEditorView(editorMode: .update,
+                                 recipeViewModel: RecipeViewModel(recipe: recipeViewModel.recipe.mutableCopy()),
+                                 didSaveRecipe: { recipe in
+                    recipeViewModel.recipe = recipe
+                },
+                                 viewMode: $viewMode)
+                    .navigationBarBackButtonHidden()
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: viewMode)
+            }
         }
+        .animation(.default, value: viewMode)
     }
 }
