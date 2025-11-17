@@ -13,6 +13,9 @@ struct HomeView: View {
     
     @State private var inputURL: Bool = false
     @State private var inputRecipe: Bool = false
+    @State private var showSettings: Bool = false
+    
+    // TODO: come back to multiple book managagment
     @State private var editRecipeBook: Bool = false
 
     @State private var searchText = ""
@@ -118,12 +121,15 @@ struct HomeView: View {
             .sheet(isPresented: $editRecipeBook) {
                 RecipeLibraryView(currentBook: $model.currentBook)
             }
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        editRecipeBook = true
+                        showSettings = true
                     } label: {
-                        Image(systemName: "books.vertical.fill")
+                        Image(systemName: "gear")
                             .foregroundColor(.accentColor)
                     }
                 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5C5E8EF52ECAE8D400A38349 /* Recipe-AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 5C5E8EF42ECAE8D400A38349 /* Recipe-AppIcon.icon */; };
+		5C5E8EF92ECAEEB500A38349 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5E8EF82ECAEEB300A38349 /* SettingsView.swift */; };
 		5C75140E2CAA66BB00D9ACE0 /* WebService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C75140D2CAA66BB00D9ACE0 /* WebService.swift */; };
 		5CB36A242EAD691200490467 /* TitledList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB36A232EAD690E00490467 /* TitledList.swift */; };
 		5CB36A2A2EAF1F7900490467 /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CB36A292EAF1F7400490467 /* PersistenceManager.swift */; };
@@ -61,6 +62,7 @@
 /* Begin PBXFileReference section */
 		5C2F9B252CFAA06D001E234D /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		5C5E8EF42ECAE8D400A38349 /* Recipe-AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "Recipe-AppIcon.icon"; sourceTree = "<group>"; };
+		5C5E8EF82ECAEEB300A38349 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		5C75140D2CAA66BB00D9ACE0 /* WebService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebService.swift; sourceTree = "<group>"; };
 		5CB36A232EAD690E00490467 /* TitledList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledList.swift; sourceTree = "<group>"; };
 		5CB36A292EAF1F7400490467 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
@@ -132,6 +134,29 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		5C5E8EFB2ECAEF0300A38349 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				FA6979E22C7C3B2D007DD2A5 /* HomeView.swift */,
+				5CB37C342CBC525B00A85C11 /* RecipeRowView.swift */,
+				5CB37C2E2CBB830400A85C11 /* URLInputView.swift */,
+				5C5E8EF82ECAEEB300A38349 /* SettingsView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		5C5E8EFC2ECAEF2A00A38349 /* Recipe */ = {
+			isa = PBXGroup;
+			children = (
+				5CC4568D2EB689760045A861 /* RecipeContainerView.swift */,
+				5CB37C362CBCB50300A85C11 /* RecipeDetailView.swift */,
+				5CC1E3282CA9F06700A2561E /* RecipeEditorView.swift */,
+				5CB37C382CBCC3DC00A85C11 /* RecipeImage.swift */,
+				5CC4568F2EB697F40045A861 /* RecipeLayoutView.swift */,
+			);
+			path = Recipe;
+			sourceTree = "<group>";
+		};
 		5C75140C2CAA664000D9ACE0 /* WebService */ = {
 			isa = PBXGroup;
 			children = (
@@ -151,16 +176,10 @@
 		5CB37C312CBB862300A85C11 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				5CC4568F2EB697F40045A861 /* RecipeLayoutView.swift */,
-				5CC4568D2EB689760045A861 /* RecipeContainerView.swift */,
-				FA6979E22C7C3B2D007DD2A5 /* HomeView.swift */,
+				5C5E8EFC2ECAEF2A00A38349 /* Recipe */,
+				5C5E8EFB2ECAEF0300A38349 /* Home */,
 				5CB7F6922CF2F388006FC01B /* RecipeBookEditor.swift */,
 				5CB37C452CD7E5E900A85C11 /* RecipeLibraryView.swift */,
-				5CC1E3282CA9F06700A2561E /* RecipeEditorView.swift */,
-				5CB37C362CBCB50300A85C11 /* RecipeDetailView.swift */,
-				5CB37C342CBC525B00A85C11 /* RecipeRowView.swift */,
-				5CB37C2E2CBB830400A85C11 /* URLInputView.swift */,
-				5CB37C382CBCC3DC00A85C11 /* RecipeImage.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -432,6 +451,7 @@
 				5CC4568E2EB689D80045A861 /* RecipeContainerView.swift in Sources */,
 				5CB37C462CD7E5E900A85C11 /* RecipeLibraryView.swift in Sources */,
 				FA6979E32C7C3B2D007DD2A5 /* HomeView.swift in Sources */,
+				5C5E8EF92ECAEEB500A38349 /* SettingsView.swift in Sources */,
 				5CB37C442CD47E9400A85C11 /* RecipeBook.swift in Sources */,
 				5CB7F6912CF246DF006FC01B /* RecipeLibraryViewModel.swift in Sources */,
 				5CB7F69B2CF78D6E006FC01B /* Orientation.swift in Sources */,
