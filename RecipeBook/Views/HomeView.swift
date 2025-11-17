@@ -124,6 +124,7 @@ struct HomeView: View {
                         editRecipeBook = true
                     } label: {
                         Image(systemName: "books.vertical.fill")
+                            .foregroundColor(.accentColor)
                     }
                 }
                 
@@ -132,6 +133,7 @@ struct HomeView: View {
                         inputURL = true
                     } label: {
                         Image(systemName: "plus")
+                            .foregroundColor(.accentColor)
                     }
                 }
             }
