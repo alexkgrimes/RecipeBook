@@ -122,7 +122,9 @@ struct HomeView: View {
                 RecipeLibraryView(currentBook: $model.currentBook)
             }
             .sheet(isPresented: $showSettings) {
-                SettingsView()
+                SettingsView(reloadDataCompletion: { recipes in
+                    model.recipes = recipes
+                })
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

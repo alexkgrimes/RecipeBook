@@ -13,5 +13,10 @@
 		<key>UIImageName</key>
 		<string>Image</string>
 	</dict>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
 </dict>
 </plist>

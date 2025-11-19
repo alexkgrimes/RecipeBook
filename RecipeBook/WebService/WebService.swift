@@ -9,7 +9,26 @@ import Foundation
 
 final class WebService {
     
-    static let endpointPrefix = "http://127.0.0.1:8000"
+    static var endpointPrefix: String? {
+        let selectedHostOption = HostOption(rawValue: UserDefaults.standard.integer(forKey: "hostOption")) ?? .localhostDev
+        let host = UserDefaults.standard.string(forKey: "hostname") ?? ""
+        
+        switch selectedHostOption {
+        case .localhostDev:
+            return "http://127.0.0.1:8000"
+        case .localhostProd:
+            return "http://0.0.0.0:8000"
+        case .hostname, .ipAddress:
+            if !host.isEmpty {
+                return "http://\(host):8000"
+            }
+        case .url:
+            if !host.isEmpty {
+                return "http://\(host)"
+            }
+        }
+        return nil
+    }
     
     // MARK: - Fetch Recipe
     
@@ -24,7 +43,11 @@ final class WebService {
     // TODO: add bookID, for now it's all one book ID
     private static func fetchRecipes(for bookID: UUID?, completion: @escaping ([Recipe]?) -> Void) {
         // create get request
-        let url = URL(string: endpointPrefix + "/recipes")!
+        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/recipes") else {
+            print("endpointPrefix is nil, invalid URL")
+            completion(nil)
+            return
+        }
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         
@@ -101,7 +124,11 @@ final class WebService {
         }
         
         // create post request
-        let url = URL(string: WebService.endpointPrefix + "/update-recipe")!
+        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/update-recipe") else {
+            print("endpointPrefix is nil, invalid URL")
+            completion(false)
+            return
+        }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -137,7 +164,11 @@ final class WebService {
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
         
         // create post request
-        let url = URL(string: WebService.endpointPrefix + "/remove-recipe")!
+        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/remove-recipe") else {
+            print("endpointPrefix is nil, invalid URL")
+            completion(false)
+            return
+        }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -173,7 +204,11 @@ final class WebService {
         let jsonData = try? JSONSerialization.data(withJSONObject: json)
 
         // create post request
-        let url = URL(string: WebService.endpointPrefix + "/scrape-recipe")!
+        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/scrape-recipe") else {
+            print("endpointPrefix is nil, invalid URL")
+            completion(Recipe.emptyRecipe(), false)
+            return
+        }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

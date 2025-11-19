@@ -55,7 +55,7 @@ struct URLInputView: View {
                 } label: {
                     Text("Manual Entry")
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.glassProminent)
                 .frame(maxWidth: .infinity)
                 .listRowBackground(Color.clear)
             }

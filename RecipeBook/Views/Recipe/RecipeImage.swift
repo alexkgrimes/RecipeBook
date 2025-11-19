@@ -16,14 +16,22 @@ struct RecipeImage: View {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
+                .onAppear {
+                    print("Using image data")
+                }
         } else {
             AsyncImage(url: recipeViewModel.recipe.imageURL) { image in
                 image
                     .resizable()
                     .scaledToFill()
                     .onAppear {
+                        print("Using async image from URL")
                         if recipeViewModel.recipe.image == nil {
-                            recipeViewModel.recipe.image = image.asUIImage().pngData()
+                            // Create an ImageRenderer with your SwiftUI Image
+                            let renderer = ImageRenderer(content: image)
+                            if let uiImage = renderer.uiImage, let pngData = uiImage.pngData() {
+                                recipeViewModel.recipe.image = pngData
+                            }
                         }
                     }
             } placeholder: {
