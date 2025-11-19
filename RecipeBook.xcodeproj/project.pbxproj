@@ -33,6 +33,9 @@
 		5CC456902EB697F70045A861 /* RecipeLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC4568F2EB697F40045A861 /* RecipeLayoutView.swift */; };
 		5CC456932EB7046B0045A861 /* CustomTextFieldModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC456922EB704630045A861 /* CustomTextFieldModifier.swift */; };
 		5CC456952EB704F90045A861 /* CustomListRowModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CC456942EB704CF0045A861 /* CustomListRowModifier.swift */; };
+		5CFCA6B02ECD74F000F90F98 /* RecipeBookShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5CFCA6A62ECD74F000F90F98 /* RecipeBookShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5CFCA6BC2ECD750200F90F98 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CFCA6B82ECD750200F90F98 /* MainInterface.storyboard */; };
+		5CFCA6BD2ECD750200F90F98 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CFCA6B92ECD750200F90F98 /* ShareViewController.swift */; };
 		FA6979DC2C7C3B2D007DD2A5 /* RecipeBookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6979DB2C7C3B2D007DD2A5 /* RecipeBookApp.swift */; };
 		FA6979E32C7C3B2D007DD2A5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6979E22C7C3B2D007DD2A5 /* HomeView.swift */; };
 		FA6979E52C7C3B3A007DD2A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA6979E42C7C3B3A007DD2A5 /* Assets.xcassets */; };
@@ -43,6 +46,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5CFCA6AE2ECD74F000F90F98 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FA6979D02C7C3B2D007DD2A5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5CFCA6A52ECD74F000F90F98;
+			remoteInfo = RecipeBookShareExtension;
+		};
 		FA6979EF2C7C3B3A007DD2A5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FA6979D02C7C3B2D007DD2A5 /* Project object */;
@@ -58,6 +68,20 @@
 			remoteInfo = RecipeBook;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5CFCA6B52ECD74F000F90F98 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				5CFCA6B02ECD74F000F90F98 /* RecipeBookShareExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5C2F9B252CFAA06D001E234D /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
@@ -88,6 +112,10 @@
 		5CC4568F2EB697F40045A861 /* RecipeLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeLayoutView.swift; sourceTree = "<group>"; };
 		5CC456922EB704630045A861 /* CustomTextFieldModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextFieldModifier.swift; sourceTree = "<group>"; };
 		5CC456942EB704CF0045A861 /* CustomListRowModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomListRowModifier.swift; sourceTree = "<group>"; };
+		5CFCA6A62ECD74F000F90F98 /* RecipeBookShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RecipeBookShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CFCA6B62ECD750200F90F98 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5CFCA6B72ECD750200F90F98 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		5CFCA6B92ECD750200F90F98 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		FA6979D82C7C3B2D007DD2A5 /* RecipeBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecipeBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA6979DB2C7C3B2D007DD2A5 /* RecipeBookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeBookApp.swift; sourceTree = "<group>"; };
 		FA6979E22C7C3B2D007DD2A5 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -102,6 +130,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5CFCA6A32ECD74F000F90F98 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FA6979D52C7C3B2D007DD2A5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -235,6 +270,16 @@
 			path = "View Components";
 			sourceTree = "<group>";
 		};
+		5CFCA6BA2ECD750200F90F98 /* RecipeBookShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				5CFCA6B62ECD750200F90F98 /* Info.plist */,
+				5CFCA6B82ECD750200F90F98 /* MainInterface.storyboard */,
+				5CFCA6B92ECD750200F90F98 /* ShareViewController.swift */,
+			);
+			path = RecipeBookShareExtension;
+			sourceTree = "<group>";
+		};
 		FA6979CF2C7C3B2D007DD2A5 = {
 			isa = PBXGroup;
 			children = (
@@ -242,6 +287,7 @@
 				FA6979DA2C7C3B2D007DD2A5 /* RecipeBook */,
 				FA6979F12C7C3B3A007DD2A5 /* RecipeBookTests */,
 				FA6979FB2C7C3B3A007DD2A5 /* RecipeBookUITests */,
+				5CFCA6BA2ECD750200F90F98 /* RecipeBookShareExtension */,
 				5C2F9B242CFAA06D001E234D /* Frameworks */,
 				FA6979D92C7C3B2D007DD2A5 /* Products */,
 			);
@@ -253,6 +299,7 @@
 				FA6979D82C7C3B2D007DD2A5 /* RecipeBook.app */,
 				FA6979EE2C7C3B3A007DD2A5 /* RecipeBookTests.xctest */,
 				FA6979F82C7C3B3A007DD2A5 /* RecipeBookUITests.xctest */,
+				5CFCA6A62ECD74F000F90F98 /* RecipeBookShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -302,6 +349,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5CFCA6A52ECD74F000F90F98 /* RecipeBookShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5CFCA6B22ECD74F000F90F98 /* Build configuration list for PBXNativeTarget "RecipeBookShareExtension" */;
+			buildPhases = (
+				5CFCA6A22ECD74F000F90F98 /* Sources */,
+				5CFCA6A32ECD74F000F90F98 /* Frameworks */,
+				5CFCA6A42ECD74F000F90F98 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RecipeBookShareExtension;
+			packageProductDependencies = (
+			);
+			productName = RecipeBookShareExtension;
+			productReference = 5CFCA6A62ECD74F000F90F98 /* RecipeBookShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		FA6979D72C7C3B2D007DD2A5 /* RecipeBook */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FA697A022C7C3B3A007DD2A5 /* Build configuration list for PBXNativeTarget "RecipeBook" */;
@@ -309,10 +375,12 @@
 				FA6979D42C7C3B2D007DD2A5 /* Sources */,
 				FA6979D52C7C3B2D007DD2A5 /* Frameworks */,
 				FA6979D62C7C3B2D007DD2A5 /* Resources */,
+				5CFCA6B52ECD74F000F90F98 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				5CFCA6AF2ECD74F000F90F98 /* PBXTargetDependency */,
 			);
 			name = RecipeBook;
 			productName = RecipeBook;
@@ -362,9 +430,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1430;
+				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					5CFCA6A52ECD74F000F90F98 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
 					FA6979D72C7C3B2D007DD2A5 = {
 						CreatedOnToolsVersion = 14.3.1;
 					};
@@ -394,11 +465,20 @@
 				FA6979D72C7C3B2D007DD2A5 /* RecipeBook */,
 				FA6979ED2C7C3B3A007DD2A5 /* RecipeBookTests */,
 				FA6979F72C7C3B3A007DD2A5 /* RecipeBookUITests */,
+				5CFCA6A52ECD74F000F90F98 /* RecipeBookShareExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5CFCA6A42ECD74F000F90F98 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5CFCA6BC2ECD750200F90F98 /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FA6979D62C7C3B2D007DD2A5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -426,6 +506,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5CFCA6A22ECD74F000F90F98 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5CFCA6BD2ECD750200F90F98 /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		FA6979D42C7C3B2D007DD2A5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -480,6 +568,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5CFCA6AF2ECD74F000F90F98 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5CFCA6A52ECD74F000F90F98 /* RecipeBookShareExtension */;
+			targetProxy = 5CFCA6AE2ECD74F000F90F98 /* PBXContainerItemProxy */;
+		};
 		FA6979F02C7C3B3A007DD2A5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FA6979D72C7C3B2D007DD2A5 /* RecipeBook */;
@@ -492,7 +585,88 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		5CFCA6B82ECD750200F90F98 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5CFCA6B72ECD750200F90F98 /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		5CFCA6B32ECD74F000F90F98 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V8LG346P7T;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecipeBookShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RecipeBookShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alexkgrimes.RecipeBook.RecipeBookShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5CFCA6B42ECD74F000F90F98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V8LG346P7T;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RecipeBookShareExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RecipeBookShareExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alexkgrimes.RecipeBook.RecipeBookShareExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		FA697A002C7C3B3A007DD2A5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -689,7 +863,6 @@
 		FA697A062C7C3B3A007DD2A5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -712,7 +885,6 @@
 		FA697A072C7C3B3A007DD2A5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -735,7 +907,6 @@
 		FA697A092C7C3B3A007DD2A5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V8LG346P7T;
@@ -757,7 +928,6 @@
 		FA697A0A2C7C3B3A007DD2A5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = V8LG346P7T;
@@ -779,6 +949,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5CFCA6B22ECD74F000F90F98 /* Build configuration list for PBXNativeTarget "RecipeBookShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CFCA6B32ECD74F000F90F98 /* Debug */,
+				5CFCA6B42ECD74F000F90F98 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		FA6979D32C7C3B2D007DD2A5 /* Build configuration list for PBXProject "RecipeBook" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

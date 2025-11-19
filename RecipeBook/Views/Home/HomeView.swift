@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct HomeView: View {
-    @ObservedObject private var recipeViewModel = RecipeViewModel()
+    @ObservedObject public var recipeViewModel: RecipeViewModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
-    @State private var inputURL: Bool = false
-    @State private var inputRecipe: Bool = false
+    @Binding public var inputURL: Bool
+    @Binding public var inputRecipe: Bool
     @State private var showSettings: Bool = false
     
     // TODO: come back to multiple book managagment
@@ -85,7 +85,7 @@ struct HomeView: View {
         return labeledRecipes.map { $0.recipe }
     }
 
-    var body: some View {
+    public var body: some View {
         let columns = (horizontalSizeClass == .compact) ?
                    [GridItem(.flexible())] : // One column for iPhone
                    [GridItem(.flexible()), GridItem(.flexible())] // Two columns for iPad
