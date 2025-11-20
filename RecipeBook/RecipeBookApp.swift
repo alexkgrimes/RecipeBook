@@ -7,23 +7,25 @@
 
 import SwiftUI
 
-class DeeplinkEnvironment {
-    
+enum NavigationDestination: Hashable {
+    case newRecipe
 }
 
 @main
 struct RecipeBookApp: App {
     @ObservedObject private var recipeViewModel = RecipeViewModel()
     @State public var inputURL: Bool = false
-    @State  public var inputRecipe: Bool = false
+    @State private var parseAlert: Bool = false
+    
+    @State private var path: [NavigationDestination] = []
     
     var body: some Scene {
         WindowGroup {
-            HomeView(recipeViewModel: recipeViewModel, inputURL: $inputURL, inputRecipe: $inputRecipe)
+            HomeView(recipeViewModel: recipeViewModel, inputURL: $inputURL, path: $path)
                 .onOpenURL { url in
                     print("Received deep link: \(url)")
                     inputURL = false
-                    inputRecipe = false
+                    path = []
                     recipeViewModel.recipe = Recipe.emptyRecipe()
                     // Add logic here to navigate to a specific view based on the URL
                     
@@ -39,11 +41,23 @@ struct RecipeBookApp: App {
                             print("The URL is: \(recipeURL)")
                             Task {
                                 let (recipe, success) = await WebService.parseRecipe(with: recipeURL)
+                                guard success else {
+                                    parseAlert = true
+                                    return
+                                }
                                 recipeViewModel.recipe = recipe
-                                inputRecipe = true
+                                path.append(.newRecipe)
                             }
                         }
                     }
+                }
+                .alert("Parse Failure", isPresented: $parseAlert) {
+                    Button("Enter Manually") {
+                        path.append(.newRecipe)
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("Failed to parse recipe from URL.")
                 }
         }
     }

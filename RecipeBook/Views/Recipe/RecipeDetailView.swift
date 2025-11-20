@@ -16,30 +16,28 @@ struct RecipeDetailView: View {
     @Binding var viewMode: RecipeViewMode
     
     var body: some View {
-        NavigationStack {
-            ScrollView(showsIndicators: false) {
-                RecipeContentView(headerView: { headerView },
-                                  ingredientsView: { ingredientsView },
-                                  instructionsView: { instructionsView },
-                                  notesView: { notesView })
-            }
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        viewMode = .edit
-                    } label: {
-                        Image(systemName: "pencil")
-                            .foregroundColor(.accentColor)
-                    }
+        ScrollView(showsIndicators: false) {
+            RecipeContentView(headerView: { headerView },
+                              ingredientsView: { ingredientsView },
+                              instructionsView: { instructionsView },
+                              notesView: { notesView })
+        }
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button {
+                    viewMode = .edit
+                } label: {
+                    Image(systemName: "pencil")
+                        .foregroundColor(.accentColor)
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .onChange(of: cookModeOn) {
-                UIApplication.shared.isIdleTimerDisabled = cookModeOn
-            }
-            .onDisappear() {
-                cookModeOn = false
-            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: cookModeOn) {
+            UIApplication.shared.isIdleTimerDisabled = cookModeOn
+        }
+        .onDisappear() {
+            cookModeOn = false
         }
         .environmentObject(recipeViewModel)
     }
@@ -214,7 +212,7 @@ extension Int {
     func timeString() -> String? {
         let hrs = self / 60
         let mins = self % 60
-        if hrs > 0 && mins > 0 {
+        if hrs > 0 || mins > 0 {
             return "\(hrs) hrs \(mins) mins"
         } else if mins > 0 {
             return "\(mins) mins"

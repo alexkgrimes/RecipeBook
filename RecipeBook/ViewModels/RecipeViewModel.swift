@@ -134,6 +134,16 @@ class RecipeViewModel: ObservableObject {
         return success
     }
     
+    func removeRecipe() async -> Bool {
+        print("removeRecipe")
+        
+        let success = await WebService.removeRecipe(uuid: recipe.uuid)
+        if !success {
+            showErrorAlert = true
+        }
+        return success
+    }
+    
     private func cleanUpRecipe() {
         recipe.ingredientSections = flattenedIngredients.sectionedList()
         recipe.instructionSections = flattenedInstructions.sectionedList()

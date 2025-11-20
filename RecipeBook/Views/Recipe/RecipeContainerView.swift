@@ -35,7 +35,6 @@ struct RecipeContainerView: View {
                     recipeViewModel.recipe = recipe
                 },
                                  viewMode: $viewMode)
-                    .navigationBarBackButtonHidden()
                     .transition(.opacity)
                     .animation(.easeInOut, value: viewMode)
             }

@@ -14,7 +14,7 @@ struct URLInputView: View {
     
     @State private var url = ""
     @State private var parseAlert: Bool = false
-    var submitCompletion: (() -> ())?
+    var pushToNewRecipe: (() -> ())?
     
     var body: some View {
         NavigationStack {
@@ -50,7 +50,7 @@ struct URLInputView: View {
             Section {
                 Button {
                     dismiss() {
-                        submitCompletion?()
+                        pushToNewRecipe?()
                     }
                 } label: {
                     Text("Manual Entry")
@@ -66,8 +66,11 @@ struct URLInputView: View {
         .alert("Parse Failure", isPresented: $parseAlert) {
             Button("Enter Manually") {
                 dismiss() {
-                    submitCompletion?()
+                    pushToNewRecipe?()
                 }
+            }
+            Button("Cancel", role: .cancel) {
+                dismiss()
             }
         } message: {
             Text("Failed to parse recipe from URL.")
@@ -84,7 +87,7 @@ struct URLInputView: View {
                 return
             }
             dismiss() {
-                submitCompletion?()
+                pushToNewRecipe?()
             }
         }
     }

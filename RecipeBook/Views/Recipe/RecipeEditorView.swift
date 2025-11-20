@@ -31,35 +31,32 @@ struct RecipeEditorView: View {
     }
     
     var body: some View {
-        NavigationStack {
-            manualEntryForm()
-                .navigationTitle(editorMode == .new ? "New Recipe" : "Update Recipe")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            dismissView()
-                        } label: {
-                            Image(systemName: "xmark")
-                        }
+        manualEntryForm()
+            .navigationTitle(editorMode == .new ? "New Recipe" : "Update Recipe")
+            .navigationBarBackButtonHidden()
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismissView()
+                    } label: {
+                        Image(systemName: "xmark")
                     }
-                    
-                    if editorMode == .update {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                Task {
-                                    let success = await recipeViewModel.updateRecipe()
-                                    if success {
-                                        didSaveRecipe?(recipeViewModel.recipe)
-                                        dismissView()
-                                    }
-                                }
-                            } label: {
-                                Image(systemName: "checkmark")
+                }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        Task {
+                            let success = await recipeViewModel.updateRecipe()
+                            if success {
+                                didSaveRecipe?(recipeViewModel.recipe)
+                                dismissView()
                             }
                         }
+                    } label: {
+                        Image(systemName: "checkmark")
                     }
-            }
+                }
         }
         .alert(isPresented: $recipeViewModel.showErrorAlert) {
             Alert(title: Text("Network Error"),

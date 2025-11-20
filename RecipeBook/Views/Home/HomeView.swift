@@ -12,7 +12,7 @@ struct HomeView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     @Binding public var inputURL: Bool
-    @Binding public var inputRecipe: Bool
+    @Binding public var path: [NavigationDestination]
     @State private var showSettings: Bool = false
     
     // TODO: come back to multiple book managagment
@@ -90,7 +90,7 @@ struct HomeView: View {
                    [GridItem(.flexible())] : // One column for iPhone
                    [GridItem(.flexible()), GridItem(.flexible())] // Two columns for iPad
         
-        NavigationStack {
+        NavigationStack(path: $path) {
             ScrollView {
                 LazyVGrid(columns: columns) {
                     ForEach(filteredRecipes) { recipe in
@@ -109,14 +109,16 @@ struct HomeView: View {
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $inputURL) {
                 URLInputView(recipeViewModel: recipeViewModel) {
-                    inputRecipe = true
+                    path.append(.newRecipe)
                 }
                 .presentationDetents([.medium])
             }
-            .sheet(isPresented: $inputRecipe) {
-                RecipeEditorView(editorMode: .new, recipeViewModel: recipeViewModel, didSaveRecipe: { _ in
-                    model.loadData()
-                }, viewMode: .constant(.edit))
+            .navigationDestination(for: NavigationDestination.self) { destination in
+                if destination == .newRecipe {
+                    RecipeEditorView(editorMode: .new, recipeViewModel: recipeViewModel, didSaveRecipe: { _ in
+                        model.loadData()
+                    }, viewMode: .constant(.edit))
+                }
             }
             .sheet(isPresented: $editRecipeBook) {
                 RecipeLibraryView(currentBook: $model.currentBook)

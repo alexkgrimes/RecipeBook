@@ -9,7 +9,6 @@ import SwiftUI
 
 struct RecipeRowView: View {
     @ObservedObject var recipeViewModel: RecipeViewModel
-    @State var displayDetail: Bool = false
     
     init(recipe: Recipe) {
         recipeViewModel = RecipeViewModel(recipe: recipe)
