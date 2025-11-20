@@ -21,9 +21,9 @@ struct RecipeEditorView: View {
     @Binding var viewMode: RecipeViewMode
     
     let editorMode: RecipeEditorMode
-    var didSaveRecipe: ((Recipe) -> ())?
+    var didSaveRecipe: ((Recipe?) -> ())?
     
-    init(editorMode: RecipeEditorMode, recipeViewModel: RecipeViewModel, didSaveRecipe: ((Recipe) -> ())? = nil, viewMode: Binding<RecipeViewMode>) {
+    init(editorMode: RecipeEditorMode, recipeViewModel: RecipeViewModel, didSaveRecipe: ((Recipe?) -> ())? = nil, viewMode: Binding<RecipeViewMode>) {
         self.editorMode = editorMode
         self.recipeViewModel = recipeViewModel
         self.didSaveRecipe = didSaveRecipe
@@ -41,6 +41,18 @@ struct RecipeEditorView: View {
                         dismissView()
                     } label: {
                         Image(systemName: "xmark")
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    DeleteButton(editorMode: editorMode) {
+                        Task {
+                            let success = await recipeViewModel.removeRecipe()
+                            if success {
+                                didSaveRecipe?(nil)
+                                dismiss()
+                            }
+                        }
                     }
                 }
 

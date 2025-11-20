@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct URLInputView: View {
-    @ObservedObject var recipeViewModel: RecipeViewModel
+    @EnvironmentObject var newRecipeViewModel: RecipeViewModel
     @Environment(\.dismiss) var dismiss
     
     @State private var url = ""
@@ -61,7 +61,7 @@ struct URLInputView: View {
             }
         }
         .onAppear {
-            recipeViewModel.recipe = Recipe.emptyRecipe()
+            newRecipeViewModel.recipe = Recipe.emptyRecipe()
         }
         .alert("Parse Failure", isPresented: $parseAlert) {
             Button("Enter Manually") {
@@ -81,7 +81,7 @@ struct URLInputView: View {
         print("Submit")
         Task {
             let (recipe, success) = await WebService.parseRecipe(with: url)
-            recipeViewModel.recipe = recipe
+            newRecipeViewModel.recipe = recipe
             guard success else {
                 parseAlert = true
                 return

@@ -36,6 +36,7 @@
 		5CFCA6B02ECD74F000F90F98 /* RecipeBookShareExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5CFCA6A62ECD74F000F90F98 /* RecipeBookShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		5CFCA6BC2ECD750200F90F98 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5CFCA6B82ECD750200F90F98 /* MainInterface.storyboard */; };
 		5CFCA6BD2ECD750200F90F98 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CFCA6B92ECD750200F90F98 /* ShareViewController.swift */; };
+		5CFCA6BF2ECF7E4B00F90F98 /* DeleteButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CFCA6BE2ECF7E4500F90F98 /* DeleteButton.swift */; };
 		FA6979DC2C7C3B2D007DD2A5 /* RecipeBookApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6979DB2C7C3B2D007DD2A5 /* RecipeBookApp.swift */; };
 		FA6979E32C7C3B2D007DD2A5 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6979E22C7C3B2D007DD2A5 /* HomeView.swift */; };
 		FA6979E52C7C3B3A007DD2A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA6979E42C7C3B3A007DD2A5 /* Assets.xcassets */; };
@@ -116,6 +117,7 @@
 		5CFCA6B62ECD750200F90F98 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5CFCA6B72ECD750200F90F98 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		5CFCA6B92ECD750200F90F98 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		5CFCA6BE2ECF7E4500F90F98 /* DeleteButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteButton.swift; sourceTree = "<group>"; };
 		FA6979D82C7C3B2D007DD2A5 /* RecipeBook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecipeBook.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA6979DB2C7C3B2D007DD2A5 /* RecipeBookApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeBookApp.swift; sourceTree = "<group>"; };
 		FA6979E22C7C3B2D007DD2A5 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -183,6 +185,7 @@
 		5C5E8EFC2ECAEF2A00A38349 /* Recipe */ = {
 			isa = PBXGroup;
 			children = (
+				5CFCA6BE2ECF7E4500F90F98 /* DeleteButton.swift */,
 				5CC4568D2EB689760045A861 /* RecipeContainerView.swift */,
 				5CB37C362CBCB50300A85C11 /* RecipeDetailView.swift */,
 				5CC1E3282CA9F06700A2561E /* RecipeEditorView.swift */,
@@ -522,6 +525,7 @@
 				5CB37C492CDFF28F00A85C11 /* RecipeViewModel.swift in Sources */,
 				5CC456902EB697F70045A861 /* RecipeLayoutView.swift in Sources */,
 				5CB37C392CBCC3DC00A85C11 /* RecipeImage.swift in Sources */,
+				5CFCA6BF2ECF7E4B00F90F98 /* DeleteButton.swift in Sources */,
 				5CB7F6952CF2F52A006FC01B /* RecipeBookViewModel.swift in Sources */,
 				5CC1E3292CA9F06700A2561E /* RecipeEditorView.swift in Sources */,
 				5CB37C3B2CCEE06900A85C11 /* HomeViewModel.swift in Sources */,

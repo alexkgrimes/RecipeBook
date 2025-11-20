@@ -13,7 +13,9 @@ enum NavigationDestination: Hashable {
 
 @main
 struct RecipeBookApp: App {
-    @ObservedObject private var recipeViewModel = RecipeViewModel()
+    @StateObject private var homeViewModel = HomeViewModel()
+    @StateObject private var newRecipeViewModel = RecipeViewModel()
+
     @State public var inputURL: Bool = false
     @State private var parseAlert: Bool = false
     
@@ -21,12 +23,12 @@ struct RecipeBookApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView(recipeViewModel: recipeViewModel, inputURL: $inputURL, path: $path)
+            HomeView(inputURL: $inputURL, path: $path)
                 .onOpenURL { url in
                     print("Received deep link: \(url)")
                     inputURL = false
                     path = []
-                    recipeViewModel.recipe = Recipe.emptyRecipe()
+                    newRecipeViewModel.recipe = Recipe.emptyRecipe()
                     // Add logic here to navigate to a specific view based on the URL
                     
                     let urlString = url.absoluteString
@@ -45,7 +47,7 @@ struct RecipeBookApp: App {
                                     parseAlert = true
                                     return
                                 }
-                                recipeViewModel.recipe = recipe
+                                newRecipeViewModel.recipe = recipe
                                 path.append(.newRecipe)
                             }
                         }
@@ -59,6 +61,8 @@ struct RecipeBookApp: App {
                 } message: {
                     Text("Failed to parse recipe from URL.")
                 }
+                .environmentObject(homeViewModel)
+                .environmentObject(newRecipeViewModel)
         }
     }
 }

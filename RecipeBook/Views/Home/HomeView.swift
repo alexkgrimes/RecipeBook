@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct HomeView: View {
-    @ObservedObject public var recipeViewModel: RecipeViewModel
+    @EnvironmentObject private var model: HomeViewModel
+    @EnvironmentObject private var newRecipeViewModel: RecipeViewModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     @Binding public var inputURL: Bool
@@ -19,7 +20,6 @@ struct HomeView: View {
     @State private var editRecipeBook: Bool = false
 
     @State private var searchText = ""
-    @StateObject private var model = HomeViewModel()
     
     var filteredRecipes: [Recipe] {
         // Strip leading/trailing whitespace from `searchText`
@@ -108,14 +108,14 @@ struct HomeView: View {
             .navigationTitle(model.currentBook?.name ?? "")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $inputURL) {
-                URLInputView(recipeViewModel: recipeViewModel) {
+                URLInputView() {
                     path.append(.newRecipe)
                 }
                 .presentationDetents([.medium])
             }
             .navigationDestination(for: NavigationDestination.self) { destination in
                 if destination == .newRecipe {
-                    RecipeEditorView(editorMode: .new, recipeViewModel: recipeViewModel, didSaveRecipe: { _ in
+                    RecipeEditorView(editorMode: .new, recipeViewModel: newRecipeViewModel, didSaveRecipe: { _ in
                         model.loadData()
                     }, viewMode: .constant(.edit))
                 }

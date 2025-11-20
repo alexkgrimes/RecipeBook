@@ -13,6 +13,7 @@ enum RecipeViewMode {
 }
 
 struct RecipeContainerView: View {
+    @EnvironmentObject var homeViewModel: HomeViewModel
     @ObservedObject var recipeViewModel: RecipeViewModel
     @State var viewMode: RecipeViewMode
     
@@ -32,7 +33,10 @@ struct RecipeContainerView: View {
                 RecipeEditorView(editorMode: .update,
                                  recipeViewModel: RecipeViewModel(recipe: recipeViewModel.recipe.mutableCopy()),
                                  didSaveRecipe: { recipe in
-                    recipeViewModel.recipe = recipe
+                    if let recipe {
+                        recipeViewModel.recipe = recipe
+                    }
+                    homeViewModel.loadData()
                 },
                                  viewMode: $viewMode)
                     .transition(.opacity)
