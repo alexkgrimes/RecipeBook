@@ -13,6 +13,7 @@ struct RecipeDetailView: View {
     @Environment(\.openURL) var openURL
     @State var showEditor: Bool = false
     @State var cookModeOn: Bool = false
+    @State var servingMultiplier: ServingMultiplier = .one
     @Binding var viewMode: RecipeViewMode
     
     var body: some View {
@@ -62,7 +63,7 @@ struct RecipeDetailView: View {
                             .foregroundStyle(Color.accentColor)
                     }
                 }
-                ServingsView(yield: recipeViewModel.recipe.yields)
+                ServingsView(recipeViewModel: recipeViewModel, servingMultiplier: $servingMultiplier)
             }
         }
         Spacer(minLength: 16.0)
@@ -98,13 +99,22 @@ struct RecipeDetailView: View {
             ForEach(recipeViewModel.recipe.ingredientSections, id: \.self) { section in
                 if !section.sectionName.isEmpty {
                     Text("\(section.sectionName)")
-                        .font(.title3)
+                        .font(.headline)
                         .bold()
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.secondary)
                         .padding(.top, 2.0)
                 }
                 ForEach(section.listItems.indices, id: \.self) { index in
-                    Text("• \(section.listItems[index])")
+                    if servingMultiplier != .one {
+                        let multipliedIngredient = section.listItems[index].numbersMultipliedBy(multiplier: servingMultiplier)
+                        if multipliedIngredient == section.listItems[index] {
+                            Text("• \(multipliedIngredient) \(Image(systemName: "exclamationmark.triangle.fill"))")
+                        } else {
+                            Text("• \(multipliedIngredient)")
+                        }
+                    } else {
+                        Text("• \(section.listItems[index])")
+                    }
                     Spacer(minLength: 4.0)
                 }
             }
@@ -195,16 +205,6 @@ struct TimeView: View {
             .padding()
             .presentationCompactAdaptation(.popover)
         }
-    }
-}
-
-struct ServingsView: View {
-    @EnvironmentObject var recipeViewModel: RecipeViewModel
-    let yield: String
-    
-    var body: some View {
-        Text(yield)
-            .foregroundStyle(.secondary)
     }
 }
 
