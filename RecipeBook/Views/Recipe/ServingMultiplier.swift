@@ -91,11 +91,25 @@ extension String {
         }
         
         var multipliedStringArray: [String] = []
-        let words = self.components(separatedBy: " ")
+        let basicWords = self.components(separatedBy: " ")
+        var words: [String] = []
         
+        // Combine compound numbers like 1 1/2
+        for word in basicWords {
+            if let numberValue = word.numberValue() {
+                if let previousWord = words.last, let previousNumber = previousWord.numberValue() {
+                    words[words.count - 1].append(" \(word)")
+                } else {
+                    words.append(word)
+                }
+            } else {
+                words.append(word)
+            }
+        }
+        
+        // Multiply the numbers
         for word in words {
             guard let numberValue = word.numberValue() else {
-                print("No number found for word: \(word)")
                 multipliedStringArray.append(word)
                 continue
             }
@@ -122,16 +136,30 @@ extension String {
             return .double(number)
         }
         
-        let slashCount = self.filter { $0 == "/" }.count
-        if slashCount == 1, let slashIndex = self.firstIndex(of: "/") {
-            let numeratorString = self.substring(to: slashIndex)
+        var wholeNumber = 0
+        var potentionFractionString = self
+        if self.contains(" ") {
+            let compoundNumber = self.components(separatedBy: " ")
+            if let firstComponent = compoundNumber[safe: 0], let number = Int(firstComponent) {
+                print("whole number: \(number)")
+                wholeNumber = number
+            }
+            
+            if let secondComponent = compoundNumber[safe: 1] {
+                potentionFractionString = secondComponent
+            }
+        }
+        
+        let slashCount = potentionFractionString.filter { $0 == "/" }.count
+        if slashCount == 1, let slashIndex = potentionFractionString.firstIndex(of: "/") {
+            let numeratorString = potentionFractionString.substring(to: slashIndex)
             print("potential numerator: \(numeratorString)")
             
-            let denomimatorString = self.substring(from: self.index(after: slashIndex))
+            let denomimatorString = potentionFractionString.substring(from: self.index(after: slashIndex))
             print("potential denominator: \(denomimatorString)")
             
             if let numerator = Int(numeratorString), let denominator = Int(denomimatorString) {
-                return .fraction((0, numerator, denominator))
+                return .fraction((wholeNumber, numerator, denominator))
             }
         }
         return nil
