@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WebKit
 
 struct RecipeDetailView: View {
     @ObservedObject var recipeViewModel: RecipeViewModel
@@ -19,6 +20,7 @@ struct RecipeDetailView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             RecipeContentView(headerView: { headerView },
+                              videoPlaybackView: { videoPlaybackView },
                               ingredientsView: { ingredientsView },
                               instructionsView: { instructionsView },
                               notesView: { notesView })
@@ -87,6 +89,13 @@ struct RecipeDetailView: View {
             .foregroundStyle(.tertiary)
         
         Spacer(minLength: 16.0)
+    }
+    
+    @ViewBuilder var videoPlaybackView: some View {
+        VideoPlaybackView(videoID: "oIFWuOK6LwM")
+            .frame(width: 533, height: 300)
+            .cornerRadius(10.0)
+            .shadow(radius: 5.0)
     }
     
     @ViewBuilder var ingredientsView: some View {
