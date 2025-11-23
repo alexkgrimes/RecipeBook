@@ -11,7 +11,7 @@ struct CustomTextFieldModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(.all, 14.0)
-            .background(RoundedRectangle(cornerRadius: 8.0)
+            .background(RoundedRectangle(cornerRadius: 18.0)
                 .fill(Color(uiColor: UIColor.secondarySystemGroupedBackground)))
     }
 }

@@ -21,6 +21,11 @@ struct RecipeDetailView: View {
         ScrollView(showsIndicators: false) {
             RecipeContentView(headerView: { headerView },
                               videoPlaybackView: { videoPlaybackView },
+                              descriptionView: {
+                if !recipeViewModel.recipe.recipeDescription.isEmpty {
+                    Text(recipeViewModel.recipe.recipeDescription)
+                }
+            },
                               ingredientsView: { ingredientsView },
                               instructionsView: { instructionsView },
                               notesView: { notesView })
@@ -46,56 +51,56 @@ struct RecipeDetailView: View {
     }
     
     @ViewBuilder var headerView: some View {
-        HStack(alignment: .top, spacing: 8.0) {
-            let imageSize = min(UIScreen.main.bounds.width / 3, UIScreen.main.bounds.height / 3)
-            RecipeImage(recipeViewModel: recipeViewModel)
-                .frame(width: imageSize, height: imageSize)
-                .clipShape(.rect(cornerRadius: 10))
+        VStack {
+            HStack(alignment: .top, spacing: 8.0) {
+                let imageSize = min(UIScreen.main.bounds.width / 3, UIScreen.main.bounds.height / 3)
+                RecipeImage(recipeViewModel: recipeViewModel)
+                    .frame(width: imageSize, height: imageSize)
+                    .clipShape(.rect(cornerRadius: 10))
 
-            VStack(alignment: .leading) {
-                Text(recipeViewModel.recipe.title)
-                    .foregroundStyle(.primary)
-                    .font(.title2)
-                    .bold()
-                if let url = recipeViewModel.recipe.url {
-                    Button {
-                        openURL(url)
-                    } label: {
-                        Text("View Original Recipe")
-                            .foregroundStyle(Color.accentColor)
+                VStack(alignment: .leading) {
+                    Text(recipeViewModel.recipe.title)
+                        .foregroundStyle(.primary)
+                        .font(.title2)
+                        .bold()
+                    if let url = recipeViewModel.recipe.url {
+                        Button {
+                            openURL(url)
+                        } label: {
+                            Text("View Original Recipe")
+                                .foregroundStyle(Color.accentColor)
+                        }
                     }
+                    ServingsView(recipeViewModel: recipeViewModel, servingMultiplier: $servingMultiplier)
                 }
-                ServingsView(recipeViewModel: recipeViewModel, servingMultiplier: $servingMultiplier)
+                Spacer()
             }
-        }
-        Spacer(minLength: 16.0)
-        
-        HStack(alignment: .center, spacing: 32.0) {
-            if let totalTime = recipeViewModel.recipe.totalTime {
-                TimeView(totalTime: totalTime, prepTime: recipeViewModel.recipe.prepTime, cookTime: recipeViewModel.recipe.cookTime)
+            Spacer(minLength: 16.0)
+            
+            HStack(alignment: .center, spacing: 32.0) {
+                if let totalTime = recipeViewModel.recipe.totalTime {
+                    TimeView(totalTime: totalTime, prepTime: recipeViewModel.recipe.prepTime, cookTime: recipeViewModel.recipe.cookTime)
+                }
+                Spacer()
             }
-            Spacer()
+            
+            Toggle("Cook Mode", isOn: $cookModeOn)
+                .foregroundStyle(.secondary)
         }
-        
-        Toggle("Cook Mode", isOn: $cookModeOn)
-            .foregroundStyle(.secondary)
-        
-        if !recipeViewModel.recipe.recipeDescription.isEmpty {
-            Text(recipeViewModel.recipe.recipeDescription)
-        }
-
-        Rectangle()
-            .frame(maxWidth: .infinity, maxHeight: 1.0)
-            .foregroundStyle(.tertiary)
-        
-        Spacer(minLength: 16.0)
     }
     
     @ViewBuilder var videoPlaybackView: some View {
-        VideoPlaybackView(videoID: "oIFWuOK6LwM")
-            .frame(width: 533, height: 300)
-            .cornerRadius(10.0)
-            .shadow(radius: 5.0)
+        if !recipeViewModel.recipe.videoURL.isEmpty,
+           let urlComponents = URLComponents(string: recipeViewModel.recipe.videoURL),
+           let queryItems = urlComponents.queryItems,
+           let item = queryItems.first(where: { $0.name == "v" }),
+           let videoID = item.value {
+                VideoPlaybackView(videoID: videoID)
+                    .frame(width: 533, height: 300)
+                    .cornerRadius(10.0)
+                    .shadow(radius: 5.0)
+
+        }
     }
     
     @ViewBuilder var ingredientsView: some View {

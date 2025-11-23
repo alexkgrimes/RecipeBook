@@ -7,22 +7,30 @@
 
 import SwiftUI
 
-struct RecipeContentView<HeaderView: View, VideoPlaybackView: View, IngredientsView: View, InstructionsView: View, NotesView: View>: View {
+struct RecipeContentView<HeaderView: View,
+                         VideoPlaybackView: View,
+                         DescriptionView: View,
+                         IngredientsView: View,
+                         InstructionsView: View,
+                         NotesView: View>: View {
     @State private var orientation = UIDevice.current.orientation
     
     private let headerView: () -> HeaderView
     private let videoPlaybackView: () -> VideoPlaybackView
+    private let descriptionView: () -> DescriptionView
     private let ingredientsView: () -> IngredientsView
     private let instructionsView: () -> InstructionsView
     private let notesView: () -> NotesView
     
     init(@ViewBuilder headerView: @escaping () -> HeaderView,
          @ViewBuilder videoPlaybackView: @escaping () -> VideoPlaybackView,
+         @ViewBuilder descriptionView: @escaping () -> DescriptionView,
          @ViewBuilder ingredientsView: @escaping () -> IngredientsView,
          @ViewBuilder instructionsView: @escaping () -> InstructionsView,
          @ViewBuilder notesView: @escaping () -> NotesView) {
         self.headerView = headerView
         self.videoPlaybackView = videoPlaybackView
+        self.descriptionView = descriptionView
         self.ingredientsView = ingredientsView
         self.instructionsView = instructionsView
         self.notesView = notesView
@@ -50,7 +58,15 @@ struct RecipeContentView<HeaderView: View, VideoPlaybackView: View, IngredientsV
         if shouldUseVStackOrientation {
             VStack(alignment: .leading) {
                 headerView()
+                descriptionView()
                 videoPlaybackView()
+                
+                Rectangle()
+                    .frame(maxWidth: .infinity, maxHeight: 1.0)
+                    .foregroundStyle(.tertiary)
+                
+                Spacer(minLength: 16.0)
+                
                 ingredientsView()
                 instructionsView()
                 notesView()
@@ -59,7 +75,18 @@ struct RecipeContentView<HeaderView: View, VideoPlaybackView: View, IngredientsV
         } else {
             
             VStack(alignment: .leading) {
-                headerView()
+                HStack(alignment: .top, spacing: 8.0) {
+                    headerView()
+                    videoPlaybackView()
+                }
+                
+                descriptionView()
+                
+                Rectangle()
+                    .frame(maxWidth: .infinity, maxHeight: 1.0)
+                    .foregroundStyle(.tertiary)
+                
+                Spacer(minLength: 16.0)
                 
                 HStack(alignment: .top) {
                     ingredientsView()

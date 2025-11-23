@@ -210,6 +210,11 @@ struct RecipeEditorView: View {
         TextField("Description", text: $recipeViewModel.recipe.recipeDescription, axis: .vertical)
             .customTextFieldStyle()
             .customListRowModifier()
+            .padding(.bottom)
+        
+        TextField("Video URL", text: $recipeViewModel.recipe.videoURL, axis: .vertical)
+            .customTextFieldStyle()
+            .customListRowModifier()
     }
     
     @ViewBuilder func instructionEditorView() -> some View {
