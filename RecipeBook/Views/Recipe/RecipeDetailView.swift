@@ -226,10 +226,12 @@ extension Int {
     func timeString() -> String? {
         let hrs = self / 60
         let mins = self % 60
-        if hrs > 0 || mins > 0 {
+        if hrs > 0 && mins > 0 {
             return "\(hrs) hrs \(mins) mins"
         } else if mins > 0 {
             return "\(mins) mins"
+        } else if hrs > 0 {
+            return "\(hrs) hrs"
         } else {
             return nil
         }

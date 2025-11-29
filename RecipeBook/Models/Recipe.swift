@@ -62,12 +62,13 @@ final class Recipe: Identifiable, Equatable, Copyable {
             lhs.videoURL == rhs.videoURL
     }
     
-    init(uuid: UUID, instructionSections: [TitledList], ingredientSections: [TitledList], imageURL: URL?, cookTime: Int?, cuisine: String, prepTime: Int?, totalTime: Int?, title: String, recipeDescription: String, author: String?, url: URL?, category: String?, nutrients: [String: String]?, siteName: String?, yields: String, notes: String, tags: [String], videoURL: String) {
+    init(uuid: UUID, instructionSections: [TitledList], ingredientSections: [TitledList], imageURL: URL?, image: Data?, cookTime: Int?, cuisine: String, prepTime: Int?, totalTime: Int?, title: String, recipeDescription: String, author: String?, url: URL?, category: String?, nutrients: [String: String]?, siteName: String?, yields: String, notes: String, tags: [String], videoURL: String) {
         self.uuid = uuid
         self.timestamp = .now
         self.instructionSections = instructionSections
         self.ingredientSections = ingredientSections
         self.imageURL = imageURL
+        self.image = image
         self.cookTime = cookTime
         self.cuisine = cuisine
         self.prepTime = prepTime
@@ -147,7 +148,7 @@ final class Recipe: Identifiable, Equatable, Copyable {
     }
     
     static func emptyRecipe() -> Recipe {
-        return Recipe(uuid: UUID(), instructionSections: [], ingredientSections: [], imageURL: URL(string: ""), cookTime: nil, cuisine: "", prepTime: nil, totalTime: nil, title: "", recipeDescription: "", author: "", url: URL(string: ""), category: "", nutrients: [:], siteName: "", yields: "", notes: "", tags: [], videoURL: "")
+        return Recipe(uuid: UUID(), instructionSections: [], ingredientSections: [], imageURL: URL(string: ""), image: nil, cookTime: nil, cuisine: "", prepTime: nil, totalTime: nil, title: "", recipeDescription: "", author: "", url: URL(string: ""), category: "", nutrients: [:], siteName: "", yields: "", notes: "", tags: [], videoURL: "")
     }
     
     public func mutableCopy() -> Recipe {
@@ -156,7 +157,7 @@ final class Recipe: Identifiable, Equatable, Copyable {
         let nutrients = self.nutrients
         let url = self.url
         let imageURL = self.imageURL
-        return Recipe(uuid: self.uuid, instructionSections: instructionSections, ingredientSections: ingredientSections, imageURL: imageURL, cookTime: cookTime, cuisine: cuisine, prepTime: prepTime, totalTime: totalTime, title: title, recipeDescription: recipeDescription, author: author, url: url, category: category, nutrients: nutrients, siteName: siteName, yields: yields, notes: notes, tags: tags, videoURL: videoURL)
+        return Recipe(uuid: self.uuid, instructionSections: instructionSections, ingredientSections: ingredientSections, imageURL: imageURL, image: image, cookTime: cookTime, cuisine: cuisine, prepTime: prepTime, totalTime: totalTime, title: title, recipeDescription: recipeDescription, author: author, url: url, category: category, nutrients: nutrients, siteName: siteName, yields: yields, notes: notes, tags: tags, videoURL: videoURL)
     }
     
     public var hasImage: Bool {
