@@ -46,7 +46,7 @@ struct RecipeModel: Codable {
     @CodableExplicitNull var siteName: String?
     @CodableExplicitNull var yields: String?
     @CodableExplicitNull var notes: String?
-    @CodableExplicitNull var tags: [String]?
+    @CodableExplicitNull var tags: [Tag]?
     @CodableExplicitNull var videoURL: String?
     
     init(from recipe: Recipe) {

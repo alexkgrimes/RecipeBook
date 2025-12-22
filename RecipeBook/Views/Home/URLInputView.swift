@@ -61,7 +61,7 @@ struct URLInputView: View {
             }
         }
         .onAppear {
-            newRecipeViewModel.recipe = Recipe.emptyRecipe()
+            newRecipeViewModel.initialize(with: Recipe.emptyRecipe())
         }
         .alert("Parse Failure", isPresented: $parseAlert) {
             Button("Enter Manually") {
@@ -81,7 +81,7 @@ struct URLInputView: View {
         print("Submit")
         Task {
             let (recipe, success) = await WebService.parseRecipe(with: url)
-            newRecipeViewModel.recipe = recipe
+            newRecipeViewModel.initialize(with: recipe)
             guard success else {
                 parseAlert = true
                 return

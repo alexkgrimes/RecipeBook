@@ -13,19 +13,7 @@ import PhotosUI
 @MainActor
 class RecipeViewModel: ObservableObject {
     @Published var showErrorAlert: Bool = false
-    @Published var recipe: Recipe {
-        didSet {
-            self.flattenedIngredients = recipe.ingredientSections.flattenedIngredients
-            self.flattenedInstructions = recipe.instructionSections.flattenedInstructions
-            
-            self.cookTimeHrs = (recipe.cookTime ?? 0) / 60
-            self.cookTimeMins = (recipe.cookTime ?? 0) % 60
-            self.prepTimeHrs = (recipe.prepTime ?? 0) / 60
-            self.prepTimeMins = (recipe.prepTime ?? 0) % 60
-            self.totalTimeHrs = (recipe.totalTime ?? 0) / 60
-            self.totalTimeMins = (recipe.totalTime ?? 0) % 60
-        }
-    }
+    @Published var recipe: Recipe
     
     @Published var imageSelection: PhotosPickerItem? = nil {
         didSet {
@@ -36,6 +24,8 @@ class RecipeViewModel: ObservableObject {
     @Published var flattenedIngredients: [FlattenedListItem] = []
     @Published var flattenedInstructions: [FlattenedListItem] = []
     
+    @Published var tags: [Tag] = []
+    
     @Published var cookTimeHrs: Int?
     @Published var cookTimeMins: Int?
     @Published var prepTimeHrs: Int?
@@ -45,15 +35,26 @@ class RecipeViewModel: ObservableObject {
     
     init(recipe: Recipe? = nil) {
         self.recipe = recipe ?? Recipe.emptyRecipe()
-        self.flattenedIngredients = recipe?.ingredientSections.flattenedIngredients ?? []
-        self.flattenedInstructions = recipe?.instructionSections.flattenedInstructions ?? []
+        initializeStoredVariables()
+    }
+    
+    func initialize(with parsedRecipe: Recipe) {
+        self.recipe = parsedRecipe
+        initializeStoredVariables()
+    }
+    
+    private func initializeStoredVariables() {
+        self.flattenedIngredients = recipe.ingredientSections.flattenedIngredients
+        self.flattenedInstructions = recipe.instructionSections.flattenedInstructions
         
-        self.cookTimeHrs = (recipe?.cookTime ?? 0) / 60
-        self.cookTimeMins = (recipe?.cookTime ?? 0) % 60
-        self.prepTimeHrs = (recipe?.prepTime ?? 0) / 60
-        self.prepTimeMins = (recipe?.prepTime ?? 0) % 60
-        self.totalTimeHrs = (recipe?.totalTime ?? 0) / 60
-        self.totalTimeMins = (recipe?.totalTime ?? 0) % 60
+        self.cookTimeHrs = (recipe.cookTime ?? 0) / 60
+        self.cookTimeMins = (recipe.cookTime ?? 0) % 60
+        self.prepTimeHrs = (recipe.prepTime ?? 0) / 60
+        self.prepTimeMins = (recipe.prepTime ?? 0) % 60
+        self.totalTimeHrs = (recipe.totalTime ?? 0) / 60
+        self.totalTimeMins = (recipe.totalTime ?? 0) % 60
+        
+        self.tags = recipe.tags
     }
     
     private func setImage(from selection: PhotosPickerItem?) {

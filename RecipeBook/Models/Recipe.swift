@@ -35,7 +35,7 @@ final class Recipe: Identifiable, Equatable, Copyable {
     var siteName: String?
     var yields: String = ""
     var notes: String = ""
-    var tags: [String] = []
+    var tags: [Tag] = []
     var videoURL: String = ""
     
     static func == (lhs: Recipe, rhs: Recipe) -> Bool {
@@ -62,7 +62,7 @@ final class Recipe: Identifiable, Equatable, Copyable {
             lhs.videoURL == rhs.videoURL
     }
     
-    init(uuid: UUID, instructionSections: [TitledList], ingredientSections: [TitledList], imageURL: URL?, image: Data?, cookTime: Int?, cuisine: String, prepTime: Int?, totalTime: Int?, title: String, recipeDescription: String, author: String?, url: URL?, category: String?, nutrients: [String: String]?, siteName: String?, yields: String, notes: String, tags: [String], videoURL: String) {
+    init(uuid: UUID, instructionSections: [TitledList], ingredientSections: [TitledList], imageURL: URL?, image: Data?, cookTime: Int?, cuisine: String, prepTime: Int?, totalTime: Int?, title: String, recipeDescription: String, author: String?, url: URL?, category: String?, nutrients: [String: String]?, siteName: String?, yields: String, notes: String, tags: [Tag], videoURL: String) {
         self.uuid = uuid
         self.timestamp = .now
         self.instructionSections = instructionSections

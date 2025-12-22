@@ -207,6 +207,16 @@ struct RecipeEditorView: View {
         .padding(.bottom)
         .customListRowModifier()
         
+        HStack {
+            ForEach(recipeViewModel.tags, id: \.self) { tag in
+                Text("\(tag.name)")
+                    .padding([.leading, .trailing], 8.0)
+                    .padding([.top, .bottom], 5.0)
+                    .background(tag.color, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .foregroundColor(.white)
+            }
+        }
+        
         TextField("Description", text: $recipeViewModel.recipe.recipeDescription, axis: .vertical)
             .customTextFieldStyle()
             .customListRowModifier()
