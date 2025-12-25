@@ -16,9 +16,6 @@ struct RecipeImage: View {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
-                .onAppear {
-                    print("Using image data")
-                }
         } else {
             AsyncImage(url: recipeViewModel.recipe.imageURL) { image in
                 image

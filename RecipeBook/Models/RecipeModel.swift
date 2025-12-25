@@ -27,27 +27,27 @@ struct ScrapedRecipeModel: Decodable {
 }
 
 struct RecipeModel: Codable {
-    @CodableExplicitNull var id: String?
-    @CodableExplicitNull var timestamp: String?
-    @CodableExplicitNull var instructionSections: [TitledList]?
-    @CodableExplicitNull var ingredientSections: [TitledList]?
-    @CodableExplicitNull var imageURL: URL?
-    @CodableExplicitNull var imageData: String?
-    @CodableExplicitNull var cookTime: Int?
-    @CodableExplicitNull var cuisine: String?
-    @CodableExplicitNull var prepTime: Int?
-    @CodableExplicitNull var totalTime: Int?
-    @CodableExplicitNull var title: String?
-    @CodableExplicitNull var recipeDescription: String?
-    @CodableExplicitNull var author: String?
-    @CodableExplicitNull var url: String?
-    @CodableExplicitNull var category: String?
-    @CodableExplicitNull var nutrients: [String: String]?
-    @CodableExplicitNull var siteName: String?
-    @CodableExplicitNull var yields: String?
-    @CodableExplicitNull var notes: String?
-    @CodableExplicitNull var tags: [Tag]?
-    @CodableExplicitNull var videoURL: String?
+    var id: String?
+    var timestamp: String?
+    var instructionSections: [TitledList]?
+    var ingredientSections: [TitledList]?
+    var imageURL: URL?
+    var imageData: String?
+    var cookTime: Int?
+    var cuisine: String?
+    var prepTime: Int?
+    var totalTime: Int?
+    var title: String?
+    var recipeDescription: String?
+    var author: String?
+    var url: String?
+    var category: String?
+    var nutrients: [String: String]?
+    var siteName: String?
+    var yields: String?
+    var notes: String?
+    var tags: [Tag]?
+    var videoURL: String?
     
     init(from recipe: Recipe) {
         self.id = recipe.uuid.uuidString

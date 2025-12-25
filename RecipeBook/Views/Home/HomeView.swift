@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject private var model: HomeViewModel
     @EnvironmentObject private var newRecipeViewModel: RecipeViewModel
+    @EnvironmentObject private var tagsViewModel: TagsViewModel
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     @Binding public var inputURL: Bool
@@ -150,6 +151,7 @@ struct HomeView: View {
         }
         .onAppear {
             model.dataInitialization()
+            tagsViewModel.dataInitialization()
         }
         .alert(isPresented: $model.showErrorAlert) {
             Alert(title: Text("Network Error"),

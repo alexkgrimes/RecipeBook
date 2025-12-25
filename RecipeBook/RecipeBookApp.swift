@@ -15,6 +15,7 @@ enum NavigationDestination: Hashable {
 struct RecipeBookApp: App {
     @StateObject private var homeViewModel = HomeViewModel()
     @StateObject private var newRecipeViewModel = RecipeViewModel()
+    @StateObject private var tagsViewModel = TagsViewModel()
 
     @State public var inputURL: Bool = false
     @State private var parseAlert: Bool = false
@@ -63,6 +64,7 @@ struct RecipeBookApp: App {
                 }
                 .environmentObject(homeViewModel)
                 .environmentObject(newRecipeViewModel)
+                .environmentObject(tagsViewModel)
         }
     }
 }

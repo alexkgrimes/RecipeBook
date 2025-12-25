@@ -69,7 +69,7 @@ final class WebService {
 //                print("Encoded JSON:")
 //                print(jsonString)
 //            }
-            // DEBUG
+//            // DEBUG
             
             let decoder = JSONDecoder()
             do {
@@ -77,9 +77,11 @@ final class WebService {
                 let recipes = recipeModels.map { Recipe(from: $0) }
                 completion(recipes)
                 
-                PersistenceManager.cacheRecipesToLocalFile(recipeModels: recipeModels)
+                if !recipes.isEmpty {
+                    PersistenceManager.cacheRecipesToLocalFile(recipeModels: recipeModels)
+                }
             } catch {
-                print("error: ", error)
+                print("fetch recipes error: ", error)
                 
                 if let recipes = PersistenceManager.loadRecipesFromLocalFile() {
                     completion(recipes)
@@ -237,4 +239,163 @@ final class WebService {
 
         task.resume()
     }
+    
+    // MARK: Tags
+    
+    static func fetchTags() async -> [Tag] {
+        await withCheckedContinuation { continuation in
+            fetchTags() { tags in
+                continuation.resume(returning: tags)
+            }
+        }
+    }
+    
+    private static func fetchTags(completion: @escaping ([Tag]) -> Void) {
+        // create get request
+        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/tags") else {
+            print("endpointPrefix is nil, invalid URL")
+            completion([])
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print(error?.localizedDescription ?? "No data")
+                
+                // TODO: load tags from local file
+//                if let recipes = PersistenceManager.loadRecipesFromLocalFile() {
+//                    completion(tags)
+//                    return
+//                }
+                
+                completion([])
+                return
+            }
+            
+            // DEBUG
+            if let jsonString = String(data: data, encoding: .utf8) {
+                print("Encoded JSON:")
+                print(jsonString)
+            }
+            // DEBUG
+            
+            let decoder = JSONDecoder()
+            do {
+                let tags = try decoder.decode([Tag].self, from: data)
+                completion(tags)
+                
+                // TODO: tag persistence
+//                PersistenceManager.cacheRecipesToLocalFile(recipeModels: recipeModels)
+            } catch {
+                print("fetch tags error: ", error)
+                
+                // TODO: cache tags
+//                if let recipes = PersistenceManager.loadRecipesFromLocalFile() {
+//                    completion(recipes)
+//                    return
+//                }
+
+                completion([])
+                return
+            }
+        }
+
+        task.resume()
+    }
+    
+    // MARK: - Add Tag
+    
+    static func addTag(newTag: Tag) async -> Bool {
+        await withCheckedContinuation() { continuation in
+            addTag(newTag: newTag) { success in
+                continuation.resume(returning: success)
+            }
+        }
+    }
+    
+    private static func addTag(newTag: Tag, completion: @escaping (Bool) -> Void) {
+        // prepare json data
+        let jsonDict: [String: Tag] = ["newTag": newTag]
+        var jsonData: Data?
+        do {
+            let jsonEncoder = JSONEncoder()
+            jsonEncoder.outputFormatting = .prettyPrinted
+            jsonData = try jsonEncoder.encode(jsonDict)
+            // Convert the Data to a String for printing
+            if let jsonData, let jsonString = String(data: jsonData, encoding: .utf8) {
+                print("Encoded JSON new tag:")
+                print(jsonString)
+            }
+        } catch {
+            completion(false)
+            print("Error encoding model to JSON: \(error)")
+        }
+        
+        // create post request
+        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/update-tag") else {
+            print("endpointPrefix is nil, invalid URL")
+            completion(false)
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        // insert json data to the request
+        request.httpBody = jsonData
+        
+        let task = URLSession.shared.dataTask(with: request) { _, response, error in
+            guard error == nil else {
+                print(error?.localizedDescription ?? "No data")
+                completion(false)
+                return
+            }
+            completion(true)
+        }
+
+        task.resume()
+    }
+    
+    // MARK: - Delete tag
+    
+    static func removeTag(uuid: UUID) async -> Bool {
+        await withCheckedContinuation() { continuation in
+            removeTag(uuid: uuid) { success in
+                continuation.resume(returning: success)
+            }
+        }
+    }
+    
+    private static func removeTag(uuid: UUID, completion: @escaping (Bool) -> Void) {
+        // prepare json data
+        let json: [String: Any] = ["uuid": uuid.uuidString]
+        let jsonData = try? JSONSerialization.data(withJSONObject: json)
+        
+        // create post request
+        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/remove-tag") else {
+            print("endpointPrefix is nil, invalid URL")
+            completion(false)
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        // insert json data to the request
+        request.httpBody = jsonData
+        
+        let task = URLSession.shared.dataTask(with: request) { _, response, error in
+            guard error == nil else {
+                print(error?.localizedDescription ?? "No data")
+                completion(false)
+                return
+            }
+            completion(true)
+        }
+
+        task.resume()
+    }
+    
 }

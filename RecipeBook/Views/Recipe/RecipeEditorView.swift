@@ -20,6 +20,9 @@ struct RecipeEditorView: View {
     @ObservedObject var recipeViewModel: RecipeViewModel
     @Binding var viewMode: RecipeViewMode
     
+    @State var currentTag: Tag? = nil
+    @State var showTagPicker: Bool = false
+    
     let editorMode: RecipeEditorMode
     var didSaveRecipe: ((Recipe?) -> ())?
     
@@ -31,7 +34,7 @@ struct RecipeEditorView: View {
     }
     
     var body: some View {
-        manualEntryForm()
+        editorForm()
             .navigationTitle(editorMode == .new ? "New Recipe" : "Update Recipe")
             .navigationBarBackButtonHidden()
             .navigationBarTitleDisplayMode(.inline)
@@ -86,7 +89,7 @@ struct RecipeEditorView: View {
     }
     
     @ViewBuilder
-    func manualEntryForm() -> some View {
+    func editorForm() -> some View {
         List {
             headerView()
             Section("Ingredients") {
@@ -209,13 +212,32 @@ struct RecipeEditorView: View {
         
         HStack {
             ForEach(recipeViewModel.tags, id: \.self) { tag in
-                Text("\(tag.name)")
-                    .padding([.leading, .trailing], 8.0)
-                    .padding([.top, .bottom], 5.0)
-                    .background(tag.color, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    .foregroundColor(.white)
+                Button {
+                    currentTag = tag
+                } label: {
+                    Text("\(tag.name)")
+                        .padding([.leading, .trailing], 8.0)
+                        .padding([.top, .bottom], 5.0)
+                        .background(tag.color, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .foregroundColor(.white)
+                }
+                .popover(item: $currentTag) { tag in
+                    TagEditorView(editorMode: .update, tag: tag)
+                }
             }
+            
+            Button {
+                showTagPicker = true
+            } label: {
+                Text("Add Tag")
+                    .popover(isPresented: $showTagPicker) {
+                        TagPickerView()
+                    }
+            }
+            .buttonStyle(.glass)
+            .foregroundStyle(Color.accentColor)
         }
+        .customListRowModifier()
         
         TextField("Description", text: $recipeViewModel.recipe.recipeDescription, axis: .vertical)
             .customTextFieldStyle()

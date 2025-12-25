@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class Tag: Equatable, Codable, Identifiable, Hashable, Copyable {
+struct Tag: Equatable, Codable, Identifiable, Hashable, Copyable {
     var id: UUID = UUID()
     var name: String = ""
     var colorString: String = ""
@@ -24,7 +24,7 @@ final class Tag: Equatable, Codable, Identifiable, Hashable, Copyable {
         if lhs.name != rhs.name {
             return false
         }
-        if lhs.color != rhs.color {
+        if lhs.colorString != rhs.colorString {
             return false
         }
         return true
@@ -33,7 +33,7 @@ final class Tag: Equatable, Codable, Identifiable, Hashable, Copyable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(name)
-        hasher.combine(color)
+        hasher.combine(colorString)
     }
     
     func mutableCopy() -> Tag {

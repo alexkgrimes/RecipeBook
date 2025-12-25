@@ -29,7 +29,7 @@ struct RecipeBookEditorView: View {
     
     var body: some View {
         NavigationStack {
-            manualEntryForm
+            editorForm
                 .navigationTitle(editorMode == .new ? "New Book" : "Update Book")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -45,7 +45,7 @@ struct RecipeBookEditorView: View {
     }
     
     @ViewBuilder
-    var manualEntryForm: some View {
+    var editorForm: some View {
         Form {
             Section("Book Name") {
                 TextField("Book Name", text: $recipeBookViewModel.recipeBook.name)
