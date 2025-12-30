@@ -77,6 +77,7 @@ struct TagEditorView: View {
             }
             .padding()
             .navigationTitle(editorMode == .new ? "Add Tag" : "Edit Tag")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {

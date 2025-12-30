@@ -153,6 +153,8 @@ class RecipeViewModel: ObservableObject {
         recipe.cookTime = (cookTimeHrs ?? 0) * 60 + (cookTimeMins ?? 0)
         recipe.totalTime = (totalTimeHrs ?? 0) * 60 + (totalTimeMins ?? 0)
         
+        recipe.tags = tags
+        
         for sectionIndex in recipe.ingredientSections.indices {
             recipe.ingredientSections[sectionIndex].listItems = recipe.ingredientSections[sectionIndex].listItems.filter { !$0.isEmpty }
         }

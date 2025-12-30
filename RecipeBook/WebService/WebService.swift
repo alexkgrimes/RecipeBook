@@ -9,7 +9,9 @@ import Foundation
 
 final class WebService {
     
-    static var endpointPrefix: String? {
+    // MARK: - Private
+    
+    private static var endpointPrefix: String? {
         let selectedHostOption = HostOption(rawValue: UserDefaults.standard.integer(forKey: "hostOption")) ?? .localhostDev
         let host = UserDefaults.standard.string(forKey: "hostname") ?? ""
         
@@ -30,6 +32,42 @@ final class WebService {
         return nil
     }
     
+    private static func getRequest(with path: String) -> URLRequest? {
+        // create get request
+        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/\(path)") else {
+            print("endpointPrefix is nil, invalid URL")
+            return nil
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        return request
+    }
+    
+    private static func postRequest<T: Encodable>(path: String, with parameters: [String: T]) -> URLRequest? {
+        var jsonData: Data?
+        do {
+            let jsonEncoder = JSONEncoder()
+            jsonEncoder.outputFormatting = .prettyPrinted
+            jsonData = try jsonEncoder.encode(parameters)
+        } catch {
+            print("Error encoding model to JSON: \(error)")
+            return nil
+        }
+        
+        // create post request
+        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/\(path)") else {
+            print("endpointPrefix is nil, invalid URL")
+            return nil
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        // insert json data to the request
+        request.httpBody = jsonData
+        return request
+    }
+    
     // MARK: - Fetch Recipe
     
     static func fetchRecipes(for bookID: UUID? = nil) async -> [Recipe]? {
@@ -42,14 +80,10 @@ final class WebService {
     
     // TODO: add bookID, for now it's all one book ID
     private static func fetchRecipes(for bookID: UUID?, completion: @escaping ([Recipe]?) -> Void) {
-        // create get request
-        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/recipes") else {
-            print("endpointPrefix is nil, invalid URL")
+        guard let request = getRequest(with: "recipes") else {
             completion(nil)
             return
         }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
@@ -107,36 +141,12 @@ final class WebService {
     }
     
     private static func addRecipe(newRecipe: Recipe, completion: @escaping (Bool) -> Void) {
-        // prepare json data
         let recipeModel = RecipeModel(from: newRecipe)
         let jsonDict: [String: RecipeModel] = ["newRecipe": recipeModel]
-        var jsonData: Data?
-        do {
-            let jsonEncoder = JSONEncoder()
-            jsonEncoder.outputFormatting = .prettyPrinted
-            jsonData = try jsonEncoder.encode(jsonDict)
-            // Convert the Data to a String for printing
-//            if let jsonData, let jsonString = String(data: jsonData, encoding: .utf8) {
-//                print("Encoded JSON new recipe:")
-//                print(jsonString)
-//            }
-        } catch {
-            completion(false)
-            print("Error encoding model to JSON: \(error)")
-        }
-        
-        // create post request
-        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/update-recipe") else {
-            print("endpointPrefix is nil, invalid URL")
+        guard let request = postRequest(path: "update-recipe", with: jsonDict) else {
             completion(false)
             return
         }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        // insert json data to the request
-        request.httpBody = jsonData
         
         let task = URLSession.shared.dataTask(with: request) { _, response, error in
             guard error == nil else {
@@ -161,22 +171,11 @@ final class WebService {
     }
     
     private static func removeRecipe(uuid: UUID, completion: @escaping (Bool) -> Void) {
-        // prepare json data
-        let json: [String: Any] = ["uuid": uuid.uuidString]
-        let jsonData = try? JSONSerialization.data(withJSONObject: json)
-        
-        // create post request
-        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/remove-recipe") else {
-            print("endpointPrefix is nil, invalid URL")
+        let jsonDict: [String: String] = ["uuid": uuid.uuidString]
+        guard let request = postRequest(path: "remove-recipe", with: jsonDict) else {
             completion(false)
             return
         }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        // insert json data to the request
-        request.httpBody = jsonData
         
         let task = URLSession.shared.dataTask(with: request) { _, response, error in
             guard error == nil else {
@@ -201,23 +200,12 @@ final class WebService {
     }
     
     private static func parseRecipe(with url: String, completion: @escaping (Recipe, Bool) -> Void) {
-        // prepare json data
-        let json: [String: Any] = ["url": url]
-        let jsonData = try? JSONSerialization.data(withJSONObject: json)
-
-        // create post request
-        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/scrape-recipe") else {
-            print("endpointPrefix is nil, invalid URL")
+        let jsonDict: [String: String] = ["url": url]
+        guard let request = postRequest(path: "scrape-recipe", with: jsonDict) else {
             completion(Recipe.emptyRecipe(), false)
             return
         }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        // insert json data to the request
-        request.httpBody = jsonData
-        
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 print(error?.localizedDescription ?? "No data")
@@ -251,24 +239,19 @@ final class WebService {
     }
     
     private static func fetchTags(completion: @escaping ([Tag]) -> Void) {
-        // create get request
-        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/tags") else {
-            print("endpointPrefix is nil, invalid URL")
+        guard let request = getRequest(with: "tags") else {
             completion([])
             return
         }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, error == nil else {
                 print(error?.localizedDescription ?? "No data")
-                
-                // TODO: load tags from local file
-//                if let recipes = PersistenceManager.loadRecipesFromLocalFile() {
-//                    completion(tags)
-//                    return
-//                }
+
+                if let tags = PersistenceManager.loadTagsFromLocalFile() {
+                    completion(tags)
+                    return
+                }
                 
                 completion([])
                 return
@@ -286,16 +269,13 @@ final class WebService {
                 let tags = try decoder.decode([Tag].self, from: data)
                 completion(tags)
                 
-                // TODO: tag persistence
-//                PersistenceManager.cacheRecipesToLocalFile(recipeModels: recipeModels)
+                PersistenceManager.cacheTagsToLocalFile(tags: tags)
             } catch {
                 print("fetch tags error: ", error)
-                
-                // TODO: cache tags
-//                if let recipes = PersistenceManager.loadRecipesFromLocalFile() {
-//                    completion(recipes)
-//                    return
-//                }
+                if let tags = PersistenceManager.loadTagsFromLocalFile() {
+                    completion(tags)
+                    return
+                }
 
                 completion([])
                 return
@@ -316,35 +296,11 @@ final class WebService {
     }
     
     private static func addTag(newTag: Tag, completion: @escaping (Bool) -> Void) {
-        // prepare json data
         let jsonDict: [String: Tag] = ["newTag": newTag]
-        var jsonData: Data?
-        do {
-            let jsonEncoder = JSONEncoder()
-            jsonEncoder.outputFormatting = .prettyPrinted
-            jsonData = try jsonEncoder.encode(jsonDict)
-            // Convert the Data to a String for printing
-            if let jsonData, let jsonString = String(data: jsonData, encoding: .utf8) {
-                print("Encoded JSON new tag:")
-                print(jsonString)
-            }
-        } catch {
-            completion(false)
-            print("Error encoding model to JSON: \(error)")
-        }
-        
-        // create post request
-        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/update-tag") else {
-            print("endpointPrefix is nil, invalid URL")
+        guard let request = postRequest(path: "update-tag", with: jsonDict) else {
             completion(false)
             return
         }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        // insert json data to the request
-        request.httpBody = jsonData
         
         let task = URLSession.shared.dataTask(with: request) { _, response, error in
             guard error == nil else {
@@ -369,22 +325,10 @@ final class WebService {
     }
     
     private static func removeTag(uuid: UUID, completion: @escaping (Bool) -> Void) {
-        // prepare json data
-        let json: [String: Any] = ["uuid": uuid.uuidString]
-        let jsonData = try? JSONSerialization.data(withJSONObject: json)
-        
-        // create post request
-        guard let endpointPrefix = endpointPrefix, let url = URL(string: endpointPrefix + "/remove-tag") else {
-            print("endpointPrefix is nil, invalid URL")
+        guard let request = postRequest(path: "remove-tag", with: ["uuid": uuid.uuidString]) else {
             completion(false)
             return
         }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        // insert json data to the request
-        request.httpBody = jsonData
         
         let task = URLSession.shared.dataTask(with: request) { _, response, error in
             guard error == nil else {
@@ -397,5 +341,4 @@ final class WebService {
 
         task.resume()
     }
-    
 }

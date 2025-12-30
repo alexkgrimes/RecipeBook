@@ -19,6 +19,8 @@ struct TagsView: View {
                     .padding([.top, .bottom], 5.0)
                     .background(tag.color, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .foregroundColor(.white)
+                
+                Spacer()
             }
         }
     }

@@ -219,7 +219,7 @@ struct RecipeEditorView: View {
                         .padding([.leading, .trailing], 8.0)
                         .padding([.top, .bottom], 5.0)
                         .background(tag.color, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                        .foregroundColor(.white)
+                        .foregroundColor(tag.color.isBright() ? .black : .white)
                 }
                 .popover(item: $currentTag) { tag in
                     TagEditorView(editorMode: .update, tag: tag)
@@ -229,9 +229,9 @@ struct RecipeEditorView: View {
             Button {
                 showTagPicker = true
             } label: {
-                Text("Add Tag")
+                Text("Edit Tags")
                     .popover(isPresented: $showTagPicker) {
-                        TagPickerView()
+                        TagPickerView(currentTags: recipeViewModel.tags, recipeViewModel: recipeViewModel)
                     }
             }
             .buttonStyle(.glass)

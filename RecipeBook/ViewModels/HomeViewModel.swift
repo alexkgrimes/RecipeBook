@@ -29,7 +29,7 @@ class HomeViewModel: ObservableObject {
                 showErrorAlert = true
                 return
             }
-            self.recipes = recipes
+            self.recipes = recipes.reversed()
         }
     }
     
