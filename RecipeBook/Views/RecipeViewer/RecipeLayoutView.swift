@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RecipeContentView<HeaderView: View,
+struct RecipeLayoutView<HeaderView: View,
                          VideoPlaybackView: View,
                          DescriptionView: View,
                          IngredientsView: View,

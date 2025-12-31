@@ -1,5 +1,5 @@
 //
-//  ServingMultiplier.swift
+//  ServingsView.swift
 //  RecipeBook
 //
 //  Created by Alexandra Paras on 11/21/25.

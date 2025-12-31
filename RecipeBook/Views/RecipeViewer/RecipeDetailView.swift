@@ -8,6 +8,7 @@
 import SwiftUI
 import WebKit
 import UIKit
+import UniformTypeIdentifiers
 
 struct RecipeDetailView: View {
     @ObservedObject var recipeViewModel: RecipeViewModel
@@ -20,16 +21,22 @@ struct RecipeDetailView: View {
     
     var body: some View {
         ScrollView(showsIndicators: false) {
-            RecipeContentView(headerView: { headerView },
+            RecipeLayoutView(headerView: { headerView },
                               videoPlaybackView: { videoPlaybackView },
                               descriptionView: {
                 if !recipeViewModel.recipe.recipeDescription.isEmpty {
                     Text(recipeViewModel.recipe.recipeDescription)
                 }
             },
-                              ingredientsView: { ingredientsView },
-                              instructionsView: { instructionsView },
-                              notesView: { notesView })
+                             ingredientsView: {
+                IngredientsView(recipeViewModel: recipeViewModel, servingMultiplier: servingMultiplier)
+            },
+                             instructionsView: {
+                InstructionsView(recipeViewModel: recipeViewModel)
+            },
+                             notesView: {
+                NotesView(recipeViewModel: recipeViewModel)
+            })
         }
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
@@ -38,6 +45,12 @@ struct RecipeDetailView: View {
                 } label: {
                     Image(systemName: "pencil")
                         .foregroundColor(.accentColor)
+                }
+            }
+             
+            if let url = generateMultiPagePDF(from: RecipePDFView(recipeViewModel: recipeViewModel), fileName: "\(recipeViewModel.recipe.title)") {
+                ToolbarItem(placement: .confirmationAction) {
+                    ShareLink("Share?", item: url, subject: Text("subject"), message: Text("message"))
                 }
             }
         }
@@ -105,82 +118,6 @@ struct RecipeDetailView: View {
                     .cornerRadius(10.0)
                     .shadow(radius: 5.0)
 
-        }
-    }
-    
-    @ViewBuilder var ingredientsView: some View {
-        VStack(alignment: .leading) {
-            Text("Ingredients")
-                .font(.title2)
-                .bold()
-                .padding(.bottom, 8.0)
-            
-            ForEach(recipeViewModel.recipe.ingredientSections, id: \.self) { section in
-                if !section.sectionName.isEmpty {
-                    Text("\(section.sectionName)")
-                        .font(.headline)
-                        .bold()
-                        .foregroundStyle(Color.secondary)
-                        .padding(.top, 2.0)
-                }
-                ForEach(section.listItems.indices, id: \.self) { index in
-                    if servingMultiplier != .one {
-                        let multipliedIngredient = section.listItems[index].numbersMultipliedBy(multiplier: servingMultiplier)
-                        if multipliedIngredient == section.listItems[index] {
-                            Text("• \(multipliedIngredient) \(Image(systemName: "exclamationmark.triangle.fill"))")
-                        } else {
-                            Text("• \(multipliedIngredient)")
-                        }
-                    } else {
-                        Text("• \(section.listItems[index])")
-                    }
-                    Spacer(minLength: 4.0)
-                }
-            }
-            
-            Spacer()
-        }
-    }
-    
-    @ViewBuilder var instructionsView: some View {
-        VStack(alignment: .leading) {
-            Text("Instructions")
-                .font(.title2)
-                .bold()
-                .padding(.bottom, 8.0)
-            
-            ForEach(recipeViewModel.recipe.instructionSections, id: \.self) { section in
-                if !section.sectionName.isEmpty {
-                    Text("\(section.sectionName)")
-                        .font(.title3)
-                        .bold()
-                        .foregroundStyle(Color.accentColor)
-                        .padding(.top, 2.0)
-                }
-                ForEach(section.listItems.indices, id: \.self) { index in
-                    HStack(alignment: .top, spacing: 8.0) {
-                        Text("\(index + 1)")
-                            .font(.title3)
-                            .bold()
-                            .foregroundStyle(Color.accentColor)
-                        
-                        Text("\(section.listItems[index])")
-                    }
-                }
-            }
-            Spacer()
-        }
-    }
-        
-    @ViewBuilder var notesView: some View {
-        if !recipeViewModel.recipe.notes.isEmpty {
-            VStack(alignment: .leading) {
-                Text("Notes")
-                    .font(.title2)
-                    .bold()
-                    .padding(.bottom, 8.0)
-                Text("\(recipeViewModel.recipe.notes)")
-            }
         }
     }
 }
